@@ -37,6 +37,18 @@ Currently, we use the table obtained from App Usage to visualize the data
 
 - Visualization of the change of application usage in a day (collection of a few months data)
 
+A circle of application with the center at as "Phone off" -> See the changes in the day
+
+#### 2.1 Comparison of different periods of time for 1 person
+
+- 01/01/2023 - 31/08/2023 : Period of time in Vietnam, as employee
+- 01/09/2023 - Now: Learning Master 2 in Lyon
+
+
+#### 2.2 Habits phone usage for student following Master 2 Lyon:
+
+- 01/09/2023 - Now but this data will be collected on at least 6 people 
+
 
 
 
