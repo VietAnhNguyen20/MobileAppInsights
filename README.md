@@ -9,7 +9,7 @@
 
 ## 1. Data preparation
 
-- The phone usage data is saved by Wellbeing (as in the Android):
+- The phone usage data is saved by Wellbeing (as in the Android), however, this data is encrypted and couldn't be decrypted (violate some privacy laws).
 https://android.stackexchange.com/questions/230211/how-to-export-phone-usage-time-data-to-json-csv-sql-txt-raw-form
 
 - Currently, we have 2 choices:
