@@ -13,9 +13,19 @@
 
 ### 1.1 Source of data
 - A table of Application - Date - Time - Usage Duration
+- App Usage allow to get the data from day of downloading (04 Dec 2023 - Now)
 
 ### 1.2 Process the data:
-- Using Python (Not yet)
+- Using Python 
+
+"""
+conda create --name M2_DataViz python=3.8
+
+conda activate M2_DataViz
+
+pip install -r requirements.txt
+
+"""
 
 
 ## 2. Visualization with D3
