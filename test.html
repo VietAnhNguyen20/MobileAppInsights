@@ -27,10 +27,10 @@ var node_radius = 5,
 var svg = d3.select("#chart").append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
-  .append("g")
+    .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-// Foci
+// Clusterings
 var foci = {
     "toppos": { x: 475, y: 150, color: "#cc5efa" },
     "leftpos": { x: 225, y: 300, color: "#29bf10" },
@@ -54,6 +54,7 @@ var simulation = d3.forceSimulation(nodes)
     .force("charge", d3.forceManyBody().strength(0))
     .force("center", d3.forceCenter(width / 2, height / 2))
     .force("collide", d3.forceCollide().radius(node_radius + padding))
+    .alpha(0) 
     .on("tick", tick);
 
 // Draw circle for each node.
@@ -65,6 +66,7 @@ var circle = svg.selectAll("circle")
     .style("fill", function(d) { return foci[d.choice].color; });    
 
 // For smoother initial transition to settling spots.
+// To be more precise, this will make the bubles grow larger and larger at the beginning (attrTween take function as parameter, and it automatically put values from 0 to 1)
 circle.transition()
     .duration(900)
     .delay(function(d,i) { return i * 5; })
@@ -73,7 +75,12 @@ circle.transition()
         return function(t) { return d.radius = i(t); };
     });
 
+
+
 // Run function periodically to make things move.
+
+
+
 var timeout;
 function timer() {
     

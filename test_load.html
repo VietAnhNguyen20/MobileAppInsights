@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>D3.js CSV Example</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+
+<body>
+    <div id="visualization"></div>
+
+    <script>
+        d3.csv("/data/stages.csv", function(data) {
+        console.log(data);
+    })
+            
+    </script>
+</body>
+
+</html>
