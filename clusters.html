@@ -21,8 +21,7 @@ var margin = {top: 16, right: 0, bottom: 0, left: 0},
 var node_radius = 5,
     padding = 1,
     cluster_padding = 10,
-    num_nodes = 200,
-    circle_radius = 200;
+    circle_radius = 250;
 
 var svg = d3.select("#chart").append("svg")
     .attr("width", width + margin.left + margin.right)
@@ -31,7 +30,7 @@ var svg = d3.select("#chart").append("svg")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 
-var people,
+var days,
     nodes;
 var groups = {};
 
@@ -58,46 +57,45 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
         groups[group].x = width / 2 + circle_radius * Math.cos(currentAngle);
         groups[group].y = height / 2 + circle_radius * Math.sin(currentAngle);
     });
-
+    console.log("---------GROUPS----------");
     console.log(groups)
+    console.log("-------------------");
 
-
-
-
-
-
-    people = {};
+    days = {};
     // Gather all the same pids
     data.forEach(d => {
-        if (Object.keys(people).includes(d.pid + "")) {
-            people[d.pid + ""].push(d);
+        if (Object.keys(days).includes(d.pid + "")) {
+            days[d.pid + ""].push(d);
         } else {
-            people[d.pid + ""] = [d];
+            days[d.pid + ""] = [d];
         }
     });
     
-    // console.log(people);
+    console.log("----------DAYS---------");
+    console.log(days);
+    console.log("-------------------");
 
 
-    nodes = Object.keys(people).map(function(d) {
-        console.log(people[d][0].grp);
+    nodes = Object.keys(days).map(function(d) {
+        console.log(days[d][0].duration)
 
-
-        groups[people[d][0].grp].cnt += 1;
+        groups[days[d][0].grp].cnt += 1;
         return {
             id: "node"+d,
-            x: groups[people[d][0].grp].x + Math.random(),
-            y: groups[people[d][0].grp].y + Math.random(),
+            x: groups[days[d][0].grp].x + Math.random(),
+            y: groups[days[d][0].grp].y + Math.random(),
             r: node_radius,
-            color: groups[people[d][0].grp].color,
-            group: people[d][0].grp,
-            timeleft: people[d][0].duration,
+            color: groups[days[d][0].grp].color,
+            group: days[d][0].grp,
+            timeleft: days[d][0].duration,
             istage: 0,
-            stages: people[d]
+            stages: days[d]
         }
         });
 
+    console.log("-------------------");
     console.log(nodes);
+    console.log("-------------------");
 
 
     // Variables.
