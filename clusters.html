@@ -30,12 +30,24 @@ var svg = d3.select("#chart").append("svg")
     .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-var groups = {
-    "met": { x: width/5, y: height/3, color: "#FAF49A", cnt: 0, fullname: "Met" },
-    "romantic": { x: 3*width/5, y: height/3, color: "#BEE5AA", cnt: 0, fullname: "Romantic" },
-    "lived": { x: 3*width/5, y: 2*height/3, color: "#93D1BA", cnt: 0, fullname: "Lived Together" },
-    "married": { x: width/5, y: 2*height/3, color: "#79BACE", cnt: 0, fullname: "Married" },
+    var groups = {
+    "met": { angle: Math.PI / 2, radius: 200, color: "#FF6F61", cnt: 0, fullname: "First Meeting" },
+    "romantic": { angle: (3 * Math.PI) / 2, radius: 200, color: "#6B5B95", cnt: 0, fullname: "Romantic Dates" },
+    "lived": { angle: 0, radius: 200, color: "#88B04B", cnt: 0, fullname: "Living Together" },
+    "married": { angle: Math.PI, radius: 200, color: "#F7CAC9", cnt: 0, fullname: "Married Life" },
 };
+
+
+// Calculating positions for groups in a circle
+const totalGroups = Object.keys(groups).length;
+const angleOffset = (2 * Math.PI) / totalGroups;
+
+Object.keys(groups).forEach((key, index) => {
+    const currentAngle = index * angleOffset;
+    groups[key].x = width / 2 + groups[key].radius * Math.cos(currentAngle);
+    groups[key].y = height / 2 + groups[key].radius * Math.sin(currentAngle);
+});
+
 
 
 var people;
