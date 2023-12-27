@@ -271,24 +271,6 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
         return force;
     }
 
-    function updateTime() {
-        const currentTime = new Date();
-        const hours = currentTime.getHours();
-        const minutes = currentTime.getMinutes();
-        const ampm = hours >= 12 ? 'pm' : 'am';
-
-        const displayHours = hours % 12 || 12; 
-        const displayMinutes = minutes < 10 ? '0' + minutes : minutes; 
-
-        const timeDisplay = document.getElementById('time-display');
-        timeDisplay.textContent = displayHours + ':' + displayMinutes + ampm;
-
-        setTimeout(updateTime, 1000); // Mettre à jour l'heure chaque seconde
-    }
-
-    updateTime();
-
-
 
 
 </script>
