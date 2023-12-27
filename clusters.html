@@ -3,35 +3,30 @@
     <title>Moving Bubble Tutorial</title>
     <meta charset="utf-8">
     <style>
-        #time-display {
+        #chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 950px;
+            margin: 0 auto;
+        }
+
+        #chart {
+            position: relative;
+        }
+
+        #timecount {
             position: absolute;
             top: 10px;
-            left: 10px;
-            font-size: 18px;
-            font-family: Arial, sans-serif;
-        }
-
-        /* Styles pour la barre de progression */
-        #progress-bar {
-            width: 100%;
-            height: 20px;
-            background-color: #ddd;
-            position: relative;
-            margin-top: 20px;
-        }
-
-        #time-indicator {
-            width: 0%;
-            height: 100%;
-            background-color: #6B5B95;
+            left: 50%;
+            transform: translateX(-50%);
         }
     </style>
 </head>
 
 <body>
-
-<div id="time-display"></div>
-<div id="main-wrapper">
+    
+<div id="chart-container">
+    <div id="timecount">Time Passed: <span class="hours">0</span> hours <span class="minutes">0</span> minutes</div>
     <div id="chart"></div>
 </div>
 
@@ -42,6 +37,10 @@
 var margin = {top: 16, right: 0, bottom: 0, left: 0},
     width = 950 - margin.left - margin.right,
     height = 700 - margin.top - margin.bottom;
+
+const timeCounter = d3.select("#timecount");
+const hoursSpan = timeCounter.select('.hours');
+const minutesSpan = timeCounter.select('.minutes');
     
 var node_radius = 5,
     padding = 1,
@@ -182,26 +181,27 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
 
     // Make time pass. Adjust node stage as necessary.
     function timer() {
-        nodes.forEach(function (o) {
-            o.timeleft -= 1;
-            if (o.timeleft === 0 && o.istage < o.stages.length - 1) {
-                // Decrease count for previous group.
-                groups[o.group].cnt -= 1;
-                // Update current node to a new group.
-                o.istage += 1;
-                o.group = o.stages[o.istage].grp;
-                o.timeleft = o.stages[o.istage].duration;
-                // Increment count for the new group.
-                groups[o.group].cnt += 1;
-            }
-        });
-        // Increment time.
-        time_so_far += 1;
-        d3.select("#timecount .cnt").text(time_so_far);
-        // Update counters.
-        groupCounts.text(d => groups[d].cnt);
-        // Do it again.
-        d3.timeout(timer, 500);
+    nodes.forEach(function (o) {
+        o.timeleft -= 1;
+        if (o.timeleft === 0 && o.istage < o.stages.length - 1) {
+            // Decrease count for previous group.
+            groups[o.group].cnt -= 1;
+            // Update current node to a new group.
+            o.istage += 1;
+            o.group = o.stages[o.istage].grp;
+            o.timeleft = o.stages[o.istage].duration;
+            // Increment count for the new group.
+            groups[o.group].cnt += 1;
+        }
+    });
+    // Increment time.
+    time_so_far += 1;
+    const hours = Math.floor(time_so_far / 60);
+    const minutes = Math.floor(time_so_far % 60);
+    hoursSpan.text(hours);
+    minutesSpan.text(minutes);
+    groupCounts.text(d => groups[d].cnt);
+    d3.timeout(timer, 1000); // Update every second
     }
 
     // Start things off after a few seconds.
