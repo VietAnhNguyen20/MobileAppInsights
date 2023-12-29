@@ -2,33 +2,131 @@
 <head>
     <title>Moving Bubble Tutorial</title>
     <meta charset="utf-8">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <style>
+
         #chart-container {
             position: relative;
             width: 100%;
             max-width: 950px;
-            margin: 0 auto;
+            margin: 20px auto 0 auto;            
         }
 
         #chart {
             position: relative;
+            margin-top: -200px;
+            margin-left: -40px;
         }
 
         #timecount {
             position: absolute;
             top: 10px;
-            left: 50%;
+            left: 0%;
             transform: translateX(-50%);
         }
+
+        #watch-container {
+            width: 150px;
+            height: 80px;
+            border: 3px solid #333;
+            background-color: #f1f1f1;
+            border-radius: 10px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 100px auto 0 auto;
+            margin-left: -100px;
+            }
+
+            #watch-face {
+            width: 130px;
+            height: 70px;
+            background-color: #fff;
+            border-radius: 7px;
+            position: relative;
+            }
+
+            #timecount {
+            font-family: 'Roboto', sans-serif;
+            font-size: 24px;
+            font-weight: bold;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex; 
+            align-items: center; 
+            }
+
+            #timecount .hours,
+            #timecount .minutes,
+            #timecount .ampm {
+            padding: 0 5px;
+            display: inline-block;
+            }
+
+            h1 {
+                text-align: center; 
+                font-size: 25px; 
+            }
+
+            #accelerate {
+                position: absolute;
+                bottom: 345px; /* -35 */
+                left: 12%; 
+                transform: translateX(-50%);
+                padding: 5px 19px; 
+                background-color: #f1f1f1;
+                border-radius: 5px;
+                cursor: pointer;
+                border: 3px solid #333;
+
+            }
+
+            #slow {
+                position: absolute;
+                bottom: 345px;
+                left: 5.5%; 
+                transform: translateX(-50%);
+                padding: 5px 19px; 
+                background-color: #f1f1f1;
+                border-radius: 5px;
+                cursor: pointer;
+                border: 3px solid #333;
+            }
+
+
+
     </style>
 </head>
 
 <body>
     
-<div id="chart-container">
-    <div id="timecount">Time Passed: <span class="hours">0</span> hours <span class="minutes">0</span> minutes</div>
-    <div id="chart"></div>
-</div>
+    <h1>Title</h1>
+    <div id="chart-container">
+        <div id="watch-container">
+            <div id="watch-face">
+            <div id="timecount">
+                <span class="hours">0</span>:
+                <span class="minutes">0</span>
+                <span class="ampm">am</span>
+            </div>
+            </div>
+        </div>            
+    </div>   
+
+    <div>
+        <button id="accelerate" onclick="fast('')">FAST</button>
+    </div>
+
+    <div>
+        <button id="slow" onclick="slow('')">SLOW</button>
+    </div>
+
+    <div id="chart-container">
+        <div id="chart"></div>
+    </div>
 
 <script src="https://d3js.org/d3.v7.min.js"></script>
 
@@ -61,7 +159,24 @@ var groups = {};
 
 d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
     var uniqueGroups = Array.from(new Set(data.map(d => d.grp)));
-    var colorScale = d3.scaleOrdinal(d3.schemeCategory10);
+    var colorScale =  d3.scaleOrdinal()
+    .range([
+        '#FFC0CB', // Rose
+        '#8A2BE2', // Violet
+        '#87CEEB', // Bleu clair
+        '#FFA07A', // Saumon clair
+        '#20B2AA', // Vert-bleu
+        '#FF6347', // Rouge corail
+        '#00FFFF', // Cyan
+        '#FFD700', // Or
+        '#32CD32', // Vert lime
+        '#E9967A', // Saumon foncé
+        '#9370DB', // Violet clair (répété)
+        '#48D1CC', // Bleu clair médium
+        '#FF1493', // Rose profond
+        '#00FF7F'  // Vert printemps
+    ]); 
+
     uniqueGroups.forEach(function(group, index) {
         groups[group] = {
             color: colorScale(index),
@@ -201,7 +316,7 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
     hoursSpan.text(hours);
     minutesSpan.text(minutes);
     groupCounts.text(d => groups[d].cnt);
-    d3.timeout(timer, 1000); // Update every second
+    d3.timeout(timer, 100); // Update every second
     }
 
     // Start things off after a few seconds.
@@ -231,7 +346,7 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
         }
 
     function forceCollide() {
-        const alpha = 0.2; // Fixed for greater rigidity!
+        const alpha = 0.2; // Fixed for greater rigidity
         const padding1 = padding; // Separation between same-color nodes
         const padding2 = cluster_padding; // Separation between different-color nodes
         let nodes;
@@ -270,6 +385,17 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
 
         return force;
     }
+
+    function fast(){
+        d3.timeout(timer, 500);
+       
+        }
+
+    function slow(){
+        d3.timeout(timer, 2500);
+    }
+
+
 
 
 
