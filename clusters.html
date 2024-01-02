@@ -71,30 +71,24 @@
                 font-size: 25px; 
             }
 
-            #accelerate {
+            #fast {
                 position: absolute;
-                bottom: 345px; /* -35 */
+                bottom: 350;
                 left: 12%; 
                 transform: translateX(-50%);
-                padding: 5px 19px; 
-                background-color: #f1f1f1;
-                border-radius: 5px;
-                cursor: pointer;
-                border: 3px solid #333;
+             
+  
 
             }
 
             #slow {
                 position: absolute;
-                bottom: 345px;
-                left: 5.5%; 
+                bottom: 350;
+                left: 6%; 
                 transform: translateX(-50%);
-                padding: 5px 19px; 
-                background-color: #f1f1f1;
-                border-radius: 5px;
-                cursor: pointer;
-                border: 3px solid #333;
+                
             }
+
 
 
 
@@ -102,6 +96,12 @@
 </head>
 
 <body>
+
+
+    <button id="fast">FASTER</button>
+
+    <button id="slow" onclick="slow()">SLOW</button>
+
     
     <h1>Title</h1>
     <div id="chart-container">
@@ -117,12 +117,6 @@
     </div>   
 
     <div>
-        <button id="accelerate" onclick="fast('')">FAST</button>
-    </div>
-
-    <div>
-        <button id="slow" onclick="slow('')">SLOW</button>
-    </div>
 
     <div id="chart-container">
         <div id="chart"></div>
@@ -131,6 +125,9 @@
 <script src="https://d3js.org/d3.v7.min.js"></script>
 
 <script>
+
+    
+
 
 var margin = {top: 16, right: 0, bottom: 0, left: 0},
     width = 950 - margin.left - margin.right,
@@ -161,20 +158,20 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
     var uniqueGroups = Array.from(new Set(data.map(d => d.grp)));
     var colorScale =  d3.scaleOrdinal()
     .range([
-        '#FFC0CB', // Rose
-        '#8A2BE2', // Violet
-        '#87CEEB', // Bleu clair
-        '#FFA07A', // Saumon clair
-        '#20B2AA', // Vert-bleu
-        '#FF6347', // Rouge corail
-        '#00FFFF', // Cyan
-        '#FFD700', // Or
-        '#32CD32', // Vert lime
-        '#E9967A', // Saumon foncé
-        '#9370DB', // Violet clair (répété)
-        '#48D1CC', // Bleu clair médium
-        '#FF1493', // Rose profond
-        '#00FF7F'  // Vert printemps
+        '#FFC0CB', 
+        '#8A2BE2',
+        '#87CEEB', 
+        '#FFA07A', 
+        '#20B2AA',
+        '#FF6347', 
+        '#00FFFF', 
+        '#FFD700', 
+        '#32CD32', 
+        '#E9967A', 
+        '#9370DB', 
+        '#48D1CC', 
+        '#FF1493', 
+        '#00FF7F'  
     ]); 
 
     uniqueGroups.forEach(function(group, index) {
@@ -316,7 +313,7 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
     hoursSpan.text(hours);
     minutesSpan.text(minutes);
     groupCounts.text(d => groups[d].cnt);
-    d3.timeout(timer, 100); // Update every second
+    d3.timeout(timer, 1000); // Update every second
     }
 
     // Start things off after a few seconds.
@@ -325,10 +322,51 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
     // Return the SVG node.
     svg.node();
 
+    let accelerationEnabledFast = false;
+    let accelerationEnabledSlow = false;
 
+    document.getElementById("fast").addEventListener("click", function() {
+        if (!accelerationEnabledFast) {
+            function timer() {
+                nodes.forEach(function (o) {
+                    o.timeleft -= 1;
+                    if (o.timeleft === 0 && o.istage < o.stages.length - 1) {
+                        // Decrease count for previous group.
+                        groups[o.group].cnt -= 1;
+                        // Update current node to a new group.
+                        o.istage += 1;
+                        o.group = o.stages[o.istage].grp;
+                        o.timeleft = o.stages[o.istage].duration;
+                        // Increment count for the new group.
+                        groups[o.group].cnt += 1;
+                    }
+                });
+                // Increment time.
+                time_so_far += 1;
+                const hours = Math.floor(time_so_far / 60);
+                const minutes = Math.floor(time_so_far % 60);
+                hoursSpan.text(hours);
+                minutesSpan.text(minutes);
+                groupCounts.text(d => groups[d].cnt);
+                d3.timeout(timer, 200); // Update every second
+
+                }
+
+                // Start things off after a few seconds.
+                d3.timeout(timer, 1000);
+
+
+                // Return the SVG node.
+                svg.node();
+                accelerationEnabledFast = true;
+                }
+            });
+        
     });
 
+    
 
+    
     function forceCluster() {
         const strength = .15;
         let nodes;
@@ -386,19 +424,7 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
         return force;
     }
 
-    function fast(){
-        d3.timeout(timer, 500);
-       
-        }
-
-    function slow(){
-        d3.timeout(timer, 2500);
-    }
-
-
-
-
-
+    
 </script>
 
 </body>
