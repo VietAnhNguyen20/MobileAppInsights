@@ -72,21 +72,37 @@
             }
 
             #fast {
-                position: absolute;
-                bottom: 350;
-                left: 12%; 
-                transform: translateX(-50%);
-             
-  
+            position: absolute;
+            bottom: 20px; 
+            left: 10.7%; 
+            transform: translateX(-50%);
+            transform: translateY(-1680%);
+            z-index: 1000; 
+            }
 
+            #medium {
+                position: absolute;
+                bottom: 20px; 
+                left: 6.5%; 
+                transform: translateX(-50%);
+                transform: translateY(-1680%);
+                z-index: 1000; 
             }
 
             #slow {
                 position: absolute;
-                bottom: 350;
-                left: 6%; 
-                transform: translateX(-50%);
-                
+                bottom: 20px; 
+                left: 2.3%; 
+                transform: translateX(50%);
+                transform: translateY(-1680%);
+                z-index: 1000;
+            }
+
+            button {
+            width: 50px; 
+            font-size: 12px; 
+            text-align: center; 
+
             }
 
 
@@ -98,9 +114,9 @@
 <body>
 
 
-    <button id="fast">FASTER</button>
-
-    <button id="slow" onclick="slow()">SLOW</button>
+    <button id="fast">FAST</button>
+    <button id="medium">NRML</button>
+    <button id="slow">SLOW</button>
 
     
     <h1>Title</h1>
@@ -291,76 +307,56 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
             .attr("fill", d => groups[d.group].color);
     });
 
-    // Make time pass. Adjust node stage as necessary.
+    let intervalID = null;
+    let timeMultiplier = 1;
+
     function timer() {
-    nodes.forEach(function (o) {
-        o.timeleft -= 1;
-        if (o.timeleft === 0 && o.istage < o.stages.length - 1) {
-            // Decrease count for previous group.
-            groups[o.group].cnt -= 1;
-            // Update current node to a new group.
-            o.istage += 1;
-            o.group = o.stages[o.istage].grp;
-            o.timeleft = o.stages[o.istage].duration;
-            // Increment count for the new group.
-            groups[o.group].cnt += 1;
-        }
-    });
-    // Increment time.
-    time_so_far += 1;
-    const hours = Math.floor(time_so_far / 60);
-    const minutes = Math.floor(time_so_far % 60);
-    hoursSpan.text(hours);
-    minutesSpan.text(minutes);
-    groupCounts.text(d => groups[d].cnt);
-    d3.timeout(timer, 1000); // Update every second
+        nodes.forEach(function (o) {
+            o.timeleft -= 1;
+            if (o.timeleft === 0 && o.istage < o.stages.length - 1) {
+                groups[o.group].cnt -= 1;
+                o.istage += 1;
+                o.group = o.stages[o.istage].grp;
+                o.timeleft = o.stages[o.istage].duration;
+                groups[o.group].cnt += 1;
+            }
+        });
+        time_so_far += 1;
+        const hours = Math.floor(time_so_far / 60);
+        const minutes = Math.floor(time_so_far % 60);
+        hoursSpan.text(hours);
+        minutesSpan.text(minutes);
+        groupCounts.text(d => groups[d].cnt);
     }
 
-    // Start things off after a few seconds.
-    d3.timeout(timer, 2000);
+    function controlSpeed(speedMultiplier) {
+        if (intervalID) {
+            clearInterval(intervalID);
+        }
 
-    // Return the SVG node.
-    svg.node();
+        intervalID = setInterval(() => {
+            timer();
+        }, 1000 / speedMultiplier);
+    }
 
-    let accelerationEnabledFast = false;
-    let accelerationEnabledSlow = false;
+    controlSpeed(timeMultiplier);
 
     document.getElementById("fast").addEventListener("click", function() {
-        if (!accelerationEnabledFast) {
-            function timer() {
-                nodes.forEach(function (o) {
-                    o.timeleft -= 1;
-                    if (o.timeleft === 0 && o.istage < o.stages.length - 1) {
-                        // Decrease count for previous group.
-                        groups[o.group].cnt -= 1;
-                        // Update current node to a new group.
-                        o.istage += 1;
-                        o.group = o.stages[o.istage].grp;
-                        o.timeleft = o.stages[o.istage].duration;
-                        // Increment count for the new group.
-                        groups[o.group].cnt += 1;
-                    }
-                });
-                // Increment time.
-                time_so_far += 1;
-                const hours = Math.floor(time_so_far / 60);
-                const minutes = Math.floor(time_so_far % 60);
-                hoursSpan.text(hours);
-                minutesSpan.text(minutes);
-                groupCounts.text(d => groups[d].cnt);
-                d3.timeout(timer, 200); // Update every second
+        timeMultiplier = 6;
+        controlSpeed(timeMultiplier);
+    });
 
-                }
+    document.getElementById("slow").addEventListener("click", function() {
+        timeMultiplier = 0.5;
+        controlSpeed(timeMultiplier);
+    });
 
-                // Start things off after a few seconds.
-                d3.timeout(timer, 1000);
+    document.getElementById("medium").addEventListener("click", function() {
+        timeMultiplier = 1;
+        controlSpeed(timeMultiplier);
+    });
 
-
-                // Return the SVG node.
-                svg.node();
-                accelerationEnabledFast = true;
-                }
-            });
+            
         
     });
 
