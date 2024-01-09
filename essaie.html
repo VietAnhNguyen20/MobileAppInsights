@@ -6,7 +6,7 @@
   <script src="https://d3js.org/d3.v7.min.js"></script>
   <style>
     .toggle-bar {
-      width: 200px;
+      width: 90px;
       height: 40px;
       border-radius: 20px;
       background-color: #ddd;
@@ -36,19 +36,15 @@
 
   function toggleMode() {
     const circle = toggleBar.select(".toggle-circle");
-    const currentX = parseFloat(circle.style("transform").split(",")[4]) || 0; // Obtenir la position X actuelle
+    const isNightMode = circle.node().getBoundingClientRect().left > 20;
 
-    let newX = currentX === 0 ? 100 : 0; // Changer la position en fonction de la position actuelle
-
-    // Limiter le déplacement du cercle à l'intérieur de la barre de basculement
-    if (newX > 20) {
-      newX = 100;
-    } else if (newX < -20) {
-      newX = 0;
+    if (isNightMode) {
+      toggleBar.style("background-color", "#ddd");
+      circle.style("transform", "translateX(0)");
+    } else {
+      toggleBar.style("background-color", "#333");
+      circle.style("transform", "translateX(100px)");
     }
-
-    toggleBar.style("background-color", newX === 0 ? "#333" : "#ddd");
-    circle.style("transform", `translateX(${newX}px)`);
   }
 
   toggleBar.on("click", toggleMode);
