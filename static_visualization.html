@@ -107,8 +107,17 @@
                 percentageSvg.selectAll("*").remove();
 
                 var percentages = data.map(function(d) {
-                    return { app: d["App name"], percentage: (d[selectedTime] / d3.sum(Object.values(d))) * 100 };
+                    var totalValue = d3.sum(data.map(function(row) {
+                        return +row[selectedTime];
+                    })); // FOr each specific time
+
+                    return {
+                        app: d["App name"],
+                        percentage: (d[selectedTime] / totalValue) * 100
+                    };
                 });
+
+
 
                 var pie = d3.pie().value(d => d.percentage);
 
@@ -130,7 +139,7 @@
                     .enter()
                     .append("text")
                     .attr("transform", d => `translate(${arc.centroid(d)})`)
-                    .text(d => d3.format(".2f")(d.data.percentage) + "%")
+                    .text(d => d3.format(".1f")(d.data.percentage) + "%")
                     .style("text-anchor", "middle")
                     .style("fill", "white");
             }
