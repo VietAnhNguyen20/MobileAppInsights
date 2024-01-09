@@ -114,12 +114,15 @@
 <body>
 
 
-    <button id="fast">FAST</button>
-    <button id="medium">NRML</button>
-    <button id="slow">SLOW</button>
+    <div>
+        <button id="fast">FAST</button>
+        <button id="medium">NRML</button>
+        <button id="slow">SLOW</button>
+    </div>
+
 
     
-    <h1>Title</h1>
+    <h1>Analyse Temporelle des Habitudes d'Utilisation des Applications Mobiles</h1>
     <div id="chart-container">
         <div id="watch-container">
             <div id="watch-face">
@@ -140,10 +143,7 @@
 
 <script src="https://d3js.org/d3.v7.min.js"></script>
 
-<script>
-
-    
-
+<script>  
 
 var margin = {top: 16, right: 0, bottom: 0, left: 0},
     width = 950 - margin.left - margin.right,
@@ -154,16 +154,39 @@ const hoursSpan = timeCounter.select('.hours');
 const minutesSpan = timeCounter.select('.minutes');
     
 var node_radius = 5,
-    padding = 1,
+    padding = 7,
     cluster_padding = 10,
-    circle_radius = 250;
+    circle_radius = 350;
 
 var svg = d3.select("#chart").append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
+    .attr("width", width + margin.left + margin.right + 500)
+    .attr("height", height + margin.top + margin.bottom + 500)
     .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
+//lune
+var moon = svg.append('image')
+    .attr('href', 'image/lune.png') 
+    .attr('width', 30)
+    .attr('height', 30)
+    .attr('x', 0) 
+    .attr('y', 30);
+    
+//soleil
+var sun = svg.append('image')
+    .attr('href', 'image/soleil.png') 
+    .attr('width', 40)
+    .attr('height', 40)
+    .attr('x', 0) 
+    .attr('y', 30);
+
+//nuit
+var night = svg.append('image')
+    .attr('href', 'image/nuit.jpg') 
+    .attr('width', 40)
+    .attr('height', 40)
+    .attr('x', 0) 
+    .attr('y', 30);
 
 var days,
     nodes;
@@ -200,15 +223,26 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
         };
     });
 
-    // Calculating positions for groups in a circle (update based on your logic)
+    // Calculating positions for groups in a circle
     const totalGroups = uniqueGroups.length;
-    const angleOffset = (2 * Math.PI) / totalGroups;
+    const angleOffset = (2 * Math.PI) / totalGroups ;
 
     uniqueGroups.forEach((group, index) => {
         const currentAngle = index * angleOffset;
-        groups[group].x = width / 2 + circle_radius * Math.cos(currentAngle);
-        groups[group].y = height / 2 + circle_radius * Math.sin(currentAngle);
+        groups[group].x = width / 2 + circle_radius * Math.cos(currentAngle) + 100;
+        groups[group].y = height / 2 + circle_radius * Math.sin(currentAngle)+ 170;
     });
+
+    const images = svg.selectAll('.appImage')
+    .data(Object.keys(groups))
+    .join('image')
+    .attr('class', 'appImage')
+    .attr('xlink:href', 'https://images.unsplash.com/photo-1485871981521-5b1fd3805eee?fit=crop&w=200&h=200') 
+    .attr('width', 20)
+    .attr('height', 20)
+    .attr('x', d => groups[d].x - 10) 
+    .attr('y', d => groups[d].y - 110);
+
     console.log("---------GROUPS----------");
     console.log(groups)
     console.log("-------------------");
@@ -250,10 +284,10 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
     console.log("-------------------");
 
 
-    // Variables.
+    // Variables
     let time_so_far = 0;
 
-    // Circle for each node.
+    // Circle for each node
     const circle = svg.selectAll("circle")
         .data(nodes)
         .join("circle")
@@ -261,22 +295,22 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
         .attr("cy", d => d.y)
         .attr("fill", d => d.color);
 
-    // Ease in the circles.
+    // Ease in the circles
     circle.transition()
         .delay((d, i) => i * 5)
         .duration(800)
         .attrTween("r", d => {
-            const i = d3.interpolate(0, d.r);
+            const i = d3.interpolate(0, d.r );
             return t => d.r = i(t);
         });
 
-    // Group name labels.
+    // Group name labels
     const groupLabels = svg.selectAll('.grp')
         .data(Object.keys(groups))
         .join("text")
         .attr("class", "grp")
         .attr("text-anchor", "middle")
-        .attr("x", d => groups[d].x)
+        .attr("x", d => groups[d].x )
         .attr("y", d => groups[d].y - 70)
         .text(d => groups[d].fullname);
 
@@ -299,17 +333,23 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
         .alpha(.09)
         .alphaDecay(0);
 
-    // Adjust position of circles.
+    // Adjust position of circles
     simulation.on("tick", () => {
-        circle
-            .attr("cx", d => d.x)
-            .attr("cy", d => d.y)
-            .attr("fill", d => groups[d.group].color);
+    const centerX = width / 2; 
+    const centerY = height / 2; 
+    const scaleFactor = 1.4;
+
+    circle
+        .attr("cx", d => centerX + (d.x - centerX) / scaleFactor )
+        .attr("cy", d => centerY + 10 + (d.y - centerY) / scaleFactor)
+        .attr("fill", d => groups[d.group].color);
     });
+
 
     let intervalID = null;
     let timeMultiplier = 1;
 
+//fonctions
     function timer() {
         nodes.forEach(function (o) {
             o.timeleft -= 1;
@@ -324,6 +364,52 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
         time_so_far += 1;
         const hours = Math.floor(time_so_far / 60);
         const minutes = Math.floor(time_so_far % 60);
+        let amPm = 'am';
+
+        if (hours >= 24) {
+        hours = 0; 
+        }
+
+        if (hours >= 12) {
+            amPm = 'pm'; 
+        }
+
+        if (hours < 12) {
+            amPm = 'am'; 
+        }
+
+        document.querySelector('.ampm').textContent = amPm;
+
+        if (hours >= 6 && hours < 17) {
+            moon.style('display', 'none');
+            sun.style('display', 'block');
+            night.style('display', 'none');
+        } else {
+            moon.style('display', 'block');
+            sun.style('display', 'none');
+            night.style('display', 'none');
+        }
+
+        if (hours >= 17) {
+        const visualizationText = document.querySelectorAll('.grp, .grpcnt, h1');
+        visualizationText.forEach(element => {
+            element.style.color = "white";
+            element.style.fill = "white";
+            document.body.style.backgroundColor = "black";
+        });
+        moon.style('display', 'none');
+        sun.style('display', 'none');
+        night.style('display', 'block');
+
+         } else {
+        const visualizationText = document.querySelectorAll('.grp, .grpcnt, h1');
+        visualizationText.forEach(element => {
+            element.style.fill = "black";
+            element.style.color = "black";
+            document.body.style.backgroundColor = "white";
+        });
+        }          
+        
         hoursSpan.text(hours);
         minutesSpan.text(minutes);
         groupCounts.text(d => groups[d].cnt);
@@ -358,11 +444,8 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
 
             
         
-    });
+    });  
 
-    
-
-    
     function forceCluster() {
         const strength = .15;
         let nodes;
@@ -419,7 +502,7 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
 
         return force;
     }
-
+    
     
 </script>
 
