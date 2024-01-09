@@ -109,7 +109,7 @@
                 var percentages = data.map(function(d) {
                     var totalValue = d3.sum(data.map(function(row) {
                         return +row[selectedTime];
-                    })); // For each specific time
+                    }));
 
                     return {
                         app: d["App name"],
@@ -121,14 +121,11 @@
 
                 var arc = d3.arc()
                     .innerRadius(0)
-                    .outerRadius(160);
+                    .outerRadius(140);
 
                 var color = d3.scaleOrdinal(d3.schemeCategory10);
 
-                // Sort the data by percentage in descending order
                 var sortedData = percentages.slice().sort((a, b) => b.percentage - a.percentage);
-
-                // Select the top 6 data points
                 var top6Data = pie(sortedData.slice(0, 6));
 
                 percentageSvg.selectAll("path")
@@ -138,24 +135,41 @@
                     .attr("d", arc)
                     .attr("fill", (d, i) => color(i));
 
-                percentageSvg.selectAll("text")
+                // Handle both icon and text
+                var elements = percentageSvg.selectAll(".icon-text-group")
                     .data(top6Data)
                     .enter()
-                    .append("text")
+                    .append("g")
+                    .attr("class", "icon-text-group");
+
+                elements.append("image")
+                    .attr("x", d => arc.centroid(d)[0] - 15) 
+                    .attr("y", d => arc.centroid(d)[1] - 15) 
+                    .attr("height", 40)
+                    .attr("xlink:href", d => 'image/' + d.data.app + '.png'); 
+
+                elements.append("text")
                     .attr("transform", d => {
                         var centroid = arc.centroid(d);
                         var x = centroid[0];
                         var y = centroid[1];
 
-                        // Avoid overlapping -> From StackOverflow
-                        var yOffset = (y > 0) ? 15 : -15;
-
-                        return `translate(${x}, ${y + yOffset})`;
+                        // Avoid overlapping with icon (From stackoverflow)
+                        var distance = 80; 
+                        var angle = Math.atan2(y, x);
+                        var newX = x + distance * Math.cos(angle);
+                        var newY = y + distance * Math.sin(angle);
+                        console.log(x,y,newX,newY)
+                        return `translate(${newX}, ${newY})`;
                     })
-                    .text(d => `${d.data.app}:\n${d3.format(".1f")(d.data.percentage)}%`)
-                    .style("text-anchor", "middle")
-                    .style("fill", "white");
+                    .text(d => `${d3.format(".1f")(d.data.percentage)}%`)
+                    .style("text-anchor", d => (arc.centroid(d)[0] > 0) ? "start" : "end") // Adjust text anchor based on the position
+                    .style("fill", "black")
+                    .style("font-weight", "bold");
+
             }
+
+
 
 
             var sliderContainer = d3.select(".chart-container");
