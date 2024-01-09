@@ -101,7 +101,7 @@
                 .attr("width", width)
                 .attr("height", 350)
                 .append("g")
-                .attr("transform", "translate(" + width / 2 + "," + 150 + ")"); // Adjusted translation
+                .attr("transform", "translate(" + width / 2 + "," + 160 + ")"); // Adjusted translation
 
             function updatePercentageChart(selectedTime) {
                 percentageSvg.selectAll("*").remove();
@@ -109,7 +109,7 @@
                 var percentages = data.map(function(d) {
                     var totalValue = d3.sum(data.map(function(row) {
                         return +row[selectedTime];
-                    })); // FOr each specific time
+                    })); // For each specific time
 
                     return {
                         app: d["App name"],
@@ -117,32 +117,46 @@
                     };
                 });
 
-
-
                 var pie = d3.pie().value(d => d.percentage);
 
                 var arc = d3.arc()
                     .innerRadius(0)
-                    .outerRadius(150);
+                    .outerRadius(160);
 
                 var color = d3.scaleOrdinal(d3.schemeCategory10);
 
+                // Sort the data by percentage in descending order
+                var sortedData = percentages.slice().sort((a, b) => b.percentage - a.percentage);
+
+                // Select the top 6 data points
+                var top6Data = pie(sortedData.slice(0, 6));
+
                 percentageSvg.selectAll("path")
-                    .data(pie(percentages))
+                    .data(top6Data)
                     .enter()
                     .append("path")
                     .attr("d", arc)
                     .attr("fill", (d, i) => color(i));
 
                 percentageSvg.selectAll("text")
-                    .data(pie(percentages))
+                    .data(top6Data)
                     .enter()
                     .append("text")
-                    .attr("transform", d => `translate(${arc.centroid(d)})`)
-                    .text(d => d3.format(".1f")(d.data.percentage) + "%")
+                    .attr("transform", d => {
+                        var centroid = arc.centroid(d);
+                        var x = centroid[0];
+                        var y = centroid[1];
+
+                        // Avoid overlapping -> From StackOverflow
+                        var yOffset = (y > 0) ? 15 : -15;
+
+                        return `translate(${x}, ${y + yOffset})`;
+                    })
+                    .text(d => `${d.data.app}:\n${d3.format(".1f")(d.data.percentage)}%`)
                     .style("text-anchor", "middle")
                     .style("fill", "white");
             }
+
 
             var sliderContainer = d3.select(".chart-container");
             var slider = sliderContainer.append("input")
