@@ -9,6 +9,7 @@
 
     <div id="chart-container">
         <div id="chart"></div>
+        <span id="selectedTime">Selected Time: </span>
     </div>
 
     <script src="https://d3js.org/d3.v7.min.js"></script>
@@ -46,7 +47,7 @@
                 .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
             // Rectangles for each data points
-            svg.selectAll()
+            var rectangles = svg.selectAll()
                 .data(data, function(d) { return d["App name"]; })
                 .enter()
                 .selectAll("rect")
@@ -61,7 +62,8 @@
                 .attr("y", function(d) { return yScale(d.app); })
                 .attr("width", xScale.bandwidth())
                 .attr("height", yScale.bandwidth())
-                .style("fill", function(d) { return colorScale(d.value); });
+                .style("fill", function(d) { return colorScale(d.value); })
+                .attr("stroke", "none");
 
             // x-axis
             svg.append("g")
@@ -76,6 +78,37 @@
             svg.append("g")
                 .attr("class", "y axis")
                 .call(d3.axisLeft(yScale));
+
+            // Update slider
+            var sliderContainer = d3.select("#chart-container");
+            var slider = sliderContainer.append("input")
+                .attr("id", "slider")
+                .attr("type", "range")
+                .attr("value", "0")
+                .attr("min", "0")
+                .attr("max", times.length - 1)
+                .attr("step", "1")
+                .style("width", width + "px");
+
+            // Retrieve the selectedTime element
+            var selectedTimeElement = d3.select("#selectedTime");
+
+            slider.on("input", function () {
+                var selectedTimeIndex = +this.value;
+                var selectedTime = times[selectedTimeIndex];
+
+                // Update the displayed selected time
+                selectedTimeElement.html("Selected Time: " + selectedTime);
+                rectangles
+                    .attr("stroke", "none")
+                    .attr("stroke-width", 1);
+                rectangles
+                    .filter(function (d) {
+                        return d.time === selectedTime;
+                    })
+                    .attr("stroke", "green") 
+                    .attr("stroke-width", 2);
+            });
 
         });
 
