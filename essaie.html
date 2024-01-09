@@ -1,19 +1,28 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Bouton</title>
+    <title>Visualisation avec Lune et Soleil</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
 </head>
 <body>
+    <svg width="500" height="300"></svg>
 
-<button id="monBouton">Appuyez ici</button>
+    <script>
+        const svg = d3.select("svg");
 
-<script>
-    document.getElementById("monBouton").addEventListener("click", function() {
-      // Code à exécuter lorsque le bouton est cliqué
-      console.log("Le bouton a été appuyé en D3 !");
-      // Vous pouvez ajouter d'autres actions que vous souhaitez effectuer ici
-    });
-  </script>
+        // Création de la lune
+        svg.append("circle")
+            .attr("cx", 40) // Position horizontale
+            .attr("cy", 150) // Position verticale
+            .attr("r", 50) // Rayon
+            .attr("fill", "black"); // Couleur
 
+        // Création du soleil
+        svg.append("circle")
+            .attr("cx", 400) // Position horizontale
+            .attr("cy", 150) // Position verticale
+            .attr("r", 40) // Rayon
+            .attr("fill", "yellow"); // Couleur
+    </script>
 </body>
 </html>
