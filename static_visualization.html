@@ -2,27 +2,40 @@
 <head>
     <title>Static Visualization for Application</title>
     <meta charset="utf-8">
+    <style>
+        .chart-container {
+            display: flex;
+            flex-direction: column;
+        }
+
+        #chart {
+            margin-bottom: 50px;
+        }
+
+        .percentage-chart-container {
+            width: 100%;
+        }
+    </style>
 </head>
 
 <body>
     <h1>Analyse statique des habitudes d'utilisation des applications mobiles</h1>
 
-    <div id="chart-container">
+    <div class="chart-container">
         <div id="chart"></div>
-        <span id="selectedTime">Selected Time: </span>
+        <div class="percentage-chart-container" id="percentage-chart"></div>
+        <span id="selectedTime">Selected time: </span>
     </div>
 
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script>
+        var percentageSvg;
 
-        // Load the CSV file
         d3.csv("data/static_visualization.csv").then(function(data) {
-
-            // Get the name of applications and the times 
             var apps = data.map(d => d["App name"]);
             var times = Object.keys(data[0]).slice(1);
 
-            var margin = {top: 50, right: 50, bottom: 50, left: 120},
+            var margin = {top: 20, right: 20, bottom: 30, left: 120},
                 width = 1800 - margin.left - margin.right,
                 height = 500 - margin.top - margin.bottom;
 
@@ -46,7 +59,6 @@
                 .append("g")
                 .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-            // Rectangles for each data points
             var rectangles = svg.selectAll()
                 .data(data, function(d) { return d["App name"]; })
                 .enter()
@@ -65,7 +77,6 @@
                 .style("fill", function(d) { return colorScale(d.value); })
                 .attr("stroke", "none");
 
-            // x-axis
             svg.append("g")
                 .attr("class", "x axis")
                 .attr("transform", "translate(0," + height + ")")
@@ -74,13 +85,53 @@
                 .attr("transform", "rotate(-45)")
                 .style("text-anchor", "end");
 
-            // y-axis
             svg.append("g")
                 .attr("class", "y axis")
                 .call(d3.axisLeft(yScale));
 
-            // Update slider
-            var sliderContainer = d3.select("#chart-container");
+            percentageSvg = d3.select("#percentage-chart")
+                .append("svg")
+                .attr("width", width)
+                .attr("height", 200)
+                .append("g")
+                .attr("transform", "translate(" + margin.left + ",0)");
+
+            
+        var percentageSvg;
+
+        function updatePercentageChart(selectedTime) {
+            percentageSvg.selectAll("*").remove();
+
+            var percentages = data.map(function(d) {
+                return { app: d["App name"], percentage: (d[selectedTime] / d3.sum(Object.values(d))) * 100 };
+            });
+
+            var pie = d3.pie().value(d => d.percentage);
+
+            var arc = d3.arc()
+                .innerRadius(0)
+                .outerRadius(100);
+
+            var color = d3.scaleOrdinal(d3.schemeCategory10);
+
+            percentageSvg.selectAll("path")
+                .data(pie(percentages))
+                .enter()
+                .append("path")
+                .attr("d", arc)
+                .attr("fill", (d, i) => color(i));
+
+            percentageSvg.selectAll("text")
+                .data(pie(percentages))
+                .enter()
+                .append("text")
+                .attr("transform", d => `translate(${arc.centroid(d)})`)
+                .text(d => d3.format(".2f")(d.data.percentage) + "%")
+                .style("text-anchor", "middle")
+                .style("fill", "white");
+        }
+
+            var sliderContainer = d3.select(".chart-container");
             var slider = sliderContainer.append("input")
                 .attr("id", "slider")
                 .attr("type", "range")
@@ -90,15 +141,13 @@
                 .attr("step", "1")
                 .style("width", width + "px");
 
-            // For display on the slider
             var selectedTimeElement = d3.select("#selectedTime");
 
             slider.on("input", function () {
                 var selectedTimeIndex = +this.value;
                 var selectedTime = times[selectedTimeIndex];
 
-                // Display on the slider
-                selectedTimeElement.html("Selected Time: " + selectedTime);
+                selectedTimeElement.html("Choosing: " + selectedTime);
                 rectangles
                     .attr("stroke", "none")
                     .attr("stroke-width", 1);
@@ -108,6 +157,8 @@
                     })
                     .attr("stroke", "green") 
                     .attr("stroke-width", 2);
+
+                updatePercentageChart(selectedTime);
             });
 
         });
