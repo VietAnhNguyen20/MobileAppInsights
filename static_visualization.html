@@ -90,14 +90,14 @@
                 .attr("step", "1")
                 .style("width", width + "px");
 
-            // Retrieve the selectedTime element
+            // For display on the slider
             var selectedTimeElement = d3.select("#selectedTime");
 
             slider.on("input", function () {
                 var selectedTimeIndex = +this.value;
                 var selectedTime = times[selectedTimeIndex];
 
-                // Update the displayed selected time
+                // Display on the slider
                 selectedTimeElement.html("Selected Time: " + selectedTime);
                 rectangles
                     .attr("stroke", "none")
