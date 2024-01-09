@@ -72,17 +72,17 @@
             }
 
             #fast {
-            position: absolute;
-            bottom: 20px; 
-            left: 10.7%; 
-            transform: translateX(-50%);
-            transform: translateY(-1680%);
-            z-index: 1000; 
+                position: absolute;
+                bottom: 5px; 
+                left: 10.7%; 
+                transform: translateX(-50%);
+                transform: translateY(-1680%);
+                z-index: 1000; 
             }
 
             #medium {
                 position: absolute;
-                bottom: 20px; 
+                bottom: 5px; 
                 left: 6.5%; 
                 transform: translateX(-50%);
                 transform: translateY(-1680%);
@@ -91,7 +91,7 @@
 
             #slow {
                 position: absolute;
-                bottom: 20px; 
+                bottom: 5px; 
                 left: 2.3%; 
                 transform: translateX(50%);
                 transform: translateY(-1680%);
@@ -99,14 +99,10 @@
             }
 
             button {
-            width: 50px; 
-            font-size: 12px; 
-            text-align: center; 
-
+                width: 50px; 
+                font-size: 12px; 
+                text-align: center; 
             }
-
-
-
 
     </style>
 </head>
@@ -154,9 +150,9 @@ const hoursSpan = timeCounter.select('.hours');
 const minutesSpan = timeCounter.select('.minutes');
     
 var node_radius = 5,
-    padding = 7,
-    cluster_padding = 10,
-    circle_radius = 350;
+    padding = 5,
+    cluster_padding = 30;
+    //circle_radius = 300;
 
 var svg = d3.select("#chart").append("svg")
     .attr("width", width + margin.left + margin.right + 500)
@@ -223,25 +219,37 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
         };
     });
 
-    // Calculating positions for groups in a circle
-    const totalGroups = uniqueGroups.length;
-    const angleOffset = (2 * Math.PI) / totalGroups ;
+    const centerX = width / 2;
+    const centerY = height / 2;
+    const radius = 330; // rayon du cercle pour les clusters
 
-    uniqueGroups.forEach((group, index) => {
-        const currentAngle = index * angleOffset;
-        groups[group].x = width / 2 + circle_radius * Math.cos(currentAngle) + 100;
-        groups[group].y = height / 2 + circle_radius * Math.sin(currentAngle)+ 170;
-    });
+    // Position du cluster central
+    groups["Screen off (locked)"].x = centerX + 50;
+    groups["Screen off (locked)"].y = centerY + 200;
+
+    const totalClusters = Object.keys(groups).length - 1; 
+    const angleOffset = (2 * Math.PI) / totalClusters;
+
+    let index = 0;
+    for (const group in groups) {
+        if (group !== "Screen off (locked)") {
+            const currentAngle = index * angleOffset;
+            groups[group].x = centerX + radius * Math.cos(currentAngle) + 50;
+            groups[group].y = centerY + radius * Math.sin(currentAngle) + 140;
+            index++;
+        }
+    }
 
     const images = svg.selectAll('.appImage')
-    .data(Object.keys(groups))
-    .join('image')
-    .attr('class', 'appImage')
-    .attr('xlink:href', 'https://images.unsplash.com/photo-1485871981521-5b1fd3805eee?fit=crop&w=200&h=200') 
-    .attr('width', 20)
-    .attr('height', 20)
-    .attr('x', d => groups[d].x - 10) 
-    .attr('y', d => groups[d].y - 110);
+        .data(Object.keys(groups))
+        .join('image')
+        .attr('class', 'appImage')
+        .attr('xlink:href', d => `image/${d}.png`) //nom d'icone correspondant
+        .attr('width', 40)
+        .attr('height', 40)
+        .attr('x', d => groups[d].x - 20)
+        .attr('y', d => groups[d].y - 130);
+
 
     console.log("---------GROUPS----------");
     console.log(groups)
@@ -333,17 +341,24 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
         .alpha(.09)
         .alphaDecay(0);
 
-    // Adjust position of circles
     simulation.on("tick", () => {
-    const centerX = width / 2; 
-    const centerY = height / 2; 
-    const scaleFactor = 1.4;
+    const centerX = width / 2;
+    const centerY = height / 2;
+    const scaleFactor = 1.3;
 
-    circle
-        .attr("cx", d => centerX + (d.x - centerX) / scaleFactor )
-        .attr("cy", d => centerY + 10 + (d.y - centerY) / scaleFactor)
-        .attr("fill", d => groups[d.group].color);
-    });
+    circle.attr("fill", d => groups[d.group].color);
+
+    // Déplace les bulles du cluster "Screen off (locked)" au-dessus des autres clusters
+    circle.filter(d => d.group === "Screen off (locked)")
+        .attr("cx", d => centerX + 10 + (d.x - centerX) / scaleFactor)
+        .attr("cy", d => centerY - 150 + (d.y - centerY) / scaleFactor);
+
+    // Pour les autres clusters, garde la position inchangée
+    circle.filter(d => d.group !== "Screen off (locked)")
+        .attr("cx", d => centerX + 20 + (d.x - centerX) / scaleFactor)
+        .attr("cy", d => centerY - 50 + (d.y - centerY) / scaleFactor);
+});
+
 
 
     let intervalID = null;
@@ -384,7 +399,7 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
             moon.style('display', 'none');
             sun.style('display', 'block');
             night.style('display', 'none');
-        } else {
+        } else{
             moon.style('display', 'block');
             sun.style('display', 'none');
             night.style('display', 'none');
@@ -502,8 +517,7 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
 
         return force;
     }
-    
-    
+   
 </script>
 
 </body>
