@@ -105,6 +105,15 @@
 
             }
 
+            body {
+            transition: background-color 0.5s ease; /* Transition en douceur pour le changement de fond */
+            color: black; /* Couleur du texte par défaut */
+            }
+
+            h1 {
+                color: black; 
+            }
+
 
 
 
@@ -119,7 +128,7 @@
     <button id="slow">SLOW</button>
 
     
-    <h1>Title</h1>
+    <h1>Analyse Temporelle des Habitudes d'Utilisation des Applications Mobiles</h1>
     <div id="chart-container">
         <div id="watch-container">
             <div id="watch-face">
@@ -138,12 +147,10 @@
         <div id="chart"></div>
     </div>
 
+
 <script src="https://d3js.org/d3.v7.min.js"></script>
 
 <script>
-
-    
-
 
 var margin = {top: 16, right: 0, bottom: 0, left: 0},
     width = 950 - margin.left - margin.right,
@@ -156,13 +163,23 @@ const minutesSpan = timeCounter.select('.minutes');
 var node_radius = 5,
     padding = 1,
     cluster_padding = 10,
-    circle_radius = 250;
+    circle_radius = 290;
 
 var svg = d3.select("#chart").append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
     .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    document.addEventListener('DOMContentLoaded', function() {
+    const chartContainer = document.getElementById('chart-container');
+    const containerWidth = chartContainer.clientWidth;
+    const containerHeight = chartContainer.clientHeight;
+
+    console.log('Largeur du conteneur de la visualisation :', containerWidth);
+    console.log('Hauteur du conteneur de la visualisation :', containerHeight);
+});
+
 
 
 var days,
@@ -190,24 +207,41 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
         '#00FF7F'  
     ]); 
 
+        // Création de la lune
+        svg.append("circle")
+            .attr("cx", 800) // Position horizontale
+            .attr("cy", 600) // Position verticale
+            .attr("r", 50) // Rayon
+            .attr("fill", "black"); // Couleur
+
+        // Création du soleil
+        svg.append("circle")
+            .attr("cx", width/4) // Position horizontale
+            .attr("cy", height/2) // Position verticale
+            .attr("r", 40) // Rayon
+            .attr("fill", "yellow"); // Couleur
+
+
     uniqueGroups.forEach(function(group, index) {
         groups[group] = {
             color: colorScale(index),
             cnt: 0,
             fullname: group,
-            x: 0, // I will change x, y later
+            x: 0, 
             y: 0
         };
     });
 
-    // Calculating positions for groups in a circle (update based on your logic)
+    // Calculating positions for groups in a circle
     const totalGroups = uniqueGroups.length;
-    const angleOffset = (2 * Math.PI) / totalGroups;
+    const angleOffset = (2 * Math.PI ) / totalGroups ;
+    const textWidth = 40; 
+    const textHeight = 14; 
 
     uniqueGroups.forEach((group, index) => {
-        const currentAngle = index * angleOffset;
+        const currentAngle = index * angleOffset ;
         groups[group].x = width / 2 + circle_radius * Math.cos(currentAngle);
-        groups[group].y = height / 2 + circle_radius * Math.sin(currentAngle);
+        groups[group].y = height / 2 + circle_radius * Math.sin(currentAngle) + 40 ;
     });
     console.log("---------GROUPS----------");
     console.log(groups)
@@ -254,7 +288,6 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
     let time_so_far = 0;
 
     // Circle for each node.
-    const circle = svg.selectAll("circle")
         .data(nodes)
         .join("circle")
         .attr("cx", d => d.x)
@@ -302,8 +335,8 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
     // Adjust position of circles.
     simulation.on("tick", () => {
         circle
-            .attr("cx", d => d.x)
-            .attr("cy", d => d.y)
+            .attr("cx", d => d.x )
+            .attr("cy", d => d.y )
             .attr("fill", d => groups[d.group].color);
     });
 
@@ -327,6 +360,26 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
         hoursSpan.text(hours);
         minutesSpan.text(minutes);
         groupCounts.text(d => groups[d].cnt);
+
+        const displayedHour = parseInt(hoursSpan.text()); 
+        if (displayedHour >= 2) {
+            document.body.style.backgroundColor = 'black'; 
+            hoursSpan.style.color = 'white'; 
+            minutesSpan.style.color = 'white'; 
+            document.querySelector('h1').style.color = 'white'; 
+            svg.selectAll('text').style('fill', 'white'); 
+            d3.select('#moon').style('display', 'block');
+            d3.select('#sun').style('display', 'none');
+        } else {
+            document.body.style.backgroundColor = 'white'; 
+            hoursSpan.style.color = 'black'; 
+            minutesSpan.style.color = 'black'; 
+            document.querySelector('h1').style.color = 'black'; 
+            svg.selectAll('text').style('fill', 'black'); 
+            d3.select('#sun').style('display', 'block');
+            d3.select('#moon').style('display', 'none');
+        }
+
     }
 
     function controlSpeed(speedMultiplier) {
@@ -354,13 +407,9 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
     document.getElementById("medium").addEventListener("click", function() {
         timeMultiplier = 1;
         controlSpeed(timeMultiplier);
-    });
-
-            
-        
-    });
-
-    
+    }); 
+           
+    });    
 
     
     function forceCluster() {
@@ -382,7 +431,7 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
     function forceCollide() {
         const alpha = 0.2; // Fixed for greater rigidity
         const padding1 = padding; // Separation between same-color nodes
-        const padding2 = cluster_padding; // Separation between different-color nodes
+        const padding2 = cluster_padding ; // Separation between different-color nodes
         let nodes;
         let maxRadius;
 
@@ -419,7 +468,6 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
 
         return force;
     }
-
     
 </script>
 
