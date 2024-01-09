@@ -1,28 +1,58 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Visualisation avec Lune et Soleil</title>
-    <script src="https://d3js.org/d3.v7.min.js"></script>
+  <meta charset="UTF-8">
+  <title>Barre de basculement jour/nuit avec D3.js</title>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <style>
+    .toggle-bar {
+      width: 200px;
+      height: 40px;
+      border-radius: 20px;
+      background-color: #ddd;
+      position: relative;
+      cursor: pointer;
+    }
+    .toggle-circle {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background-color: #fff;
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      transition: transform 0.3s ease;
+    }
+  </style>
 </head>
 <body>
-    <svg width="500" height="300"></svg>
 
-    <script>
-        const svg = d3.select("svg");
+<div class="toggle-bar" id="toggleBar">
+  <div class="toggle-circle"></div>
+</div>
 
-        // Création de la lune
-        svg.append("circle")
-            .attr("cx", 40) // Position horizontale
-            .attr("cy", 150) // Position verticale
-            .attr("r", 50) // Rayon
-            .attr("fill", "black"); // Couleur
+<script>
+  const toggleBar = d3.select("#toggleBar");
 
-        // Création du soleil
-        svg.append("circle")
-            .attr("cx", 400) // Position horizontale
-            .attr("cy", 150) // Position verticale
-            .attr("r", 40) // Rayon
-            .attr("fill", "yellow"); // Couleur
-    </script>
+  function toggleMode() {
+    const circle = toggleBar.select(".toggle-circle");
+    const currentX = parseFloat(circle.style("transform").split(",")[4]) || 0; // Obtenir la position X actuelle
+
+    let newX = currentX === 0 ? 100 : 0; // Changer la position en fonction de la position actuelle
+
+    // Limiter le déplacement du cercle à l'intérieur de la barre de basculement
+    if (newX > 20) {
+      newX = 100;
+    } else if (newX < -20) {
+      newX = 0;
+    }
+
+    toggleBar.style("background-color", newX === 0 ? "#333" : "#ddd");
+    circle.style("transform", `translateX(${newX}px)`);
+  }
+
+  toggleBar.on("click", toggleMode);
+</script>
+
 </body>
 </html>
