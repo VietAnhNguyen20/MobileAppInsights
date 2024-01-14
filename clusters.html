@@ -8,7 +8,7 @@
 
    <style>
 
-        #chart-container {
+        /*#chart-container {
             position: relative;
             width: 100%;
             max-width: 950px;
@@ -21,16 +21,18 @@
             margin-left: -40px;
         }
 
-        #timecount {
+        /*#timecount {
             position: absolute;
             top: 10px;
             left: 0%;
             transform: translateX(-50%);
-        }
+        } */
 
-        #watch-container {
-            width: 150px;
+        /*#watch-container {
+            /*width: 150px;
             height: 80px;
+            bottom: 285px;
+
             border: 3px solid #333;
             background-color: #f1f1f1;
             border-radius: 10px;
@@ -42,17 +44,21 @@
             margin-left: -385px;
             margin: 100px 0 0 20px;
             margin-left: -385px;
-            }
+            position: relative;
+            top: 520px;
+            }*/
 
-            #watch-face {
+       /* #watch-face {
+            bottom: 285px;
             width: 130px;
             height: 70px;
             background-color: #fff;
             border-radius: 7px;
             position: relative;
+
             }
 
-            #timecount {
+        #timecount {
             font-family: 'Roboto', sans-serif;
             font-size: 24px;
             font-weight: bold;
@@ -74,6 +80,7 @@
             #fast,
             #medium,
             #slow {
+                /*margin-top: 2220px; 
                 width: 50px;
                 height: 30px; 
                 position: absolute;
@@ -83,9 +90,11 @@
                 display: flex;
                 align-items: center; 
                 justify-content: center;
-            }
+                position: relative;
+                top: 270px;
+            }*/
 
-            #fast {
+            /*#fast {
                 left: 3.3%;
                 transform: translateX(170%);
                 z-index: 1000;
@@ -94,7 +103,6 @@
                 align-items: center; 
                 justify-content: center;
             }
-
 
             #medium {
                 transform: translateX(170%);
@@ -110,9 +118,9 @@
             #button-style {
                 font-size: 8px;
                 border: 2px solid #110101; 
-            }
+            }*/
 
-            #container-fluid {
+            /*#container-fluid {
                 height: 50vh; 
                 left: -13.7%;
                 transform: translateX(170%);
@@ -142,7 +150,18 @@
                 font-size: 25px;
             }
 
-            #chart-container {
+            .chart-container {
+                margin-top: 20px; 
+                margin-left: -300px; 
+            }
+
+            #chart {
+                margin-bottom: 20px;
+                margin-left: 100px; 
+                bottom: -185px;
+            }*/
+
+            /*#chart-container {
                 display: flex;
                 flex-direction: column;
                 align-items: center;
@@ -160,8 +179,81 @@
             #percentage-chart-container svg {
                 display: block;
                 margin: auto;
+            }*/
+
+
+            #watch-container {
+                position: relative;
+                top: 260px;
+                right: -25%;
+                width: 150px;
+                height: 80px;
+                border: 3px solid #333;
+                background-color: #f1f1f1;
+                border-radius: 10px;
+                margin: 20px 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
             }
-            
+
+            #watch-face {
+                width: 130px;
+                height: 70px;
+                top: 0px;
+                background-color: #f7f7f7;
+                border-radius: 7px;
+                position: relative;
+            }
+
+            #timecount {
+                font-family: 'Roboto', sans-serif;
+                font-size: 24px;
+                font-weight: bold;
+                position: absolute;
+                top: 35px;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                display: flex;
+                align-items: center;
+            }
+
+            #timecount .hours,
+            #timecount .minutes,
+            #timecount .ampm {
+                padding: 0 5px;
+                display: inline-block;
+            }
+
+            #fast {
+                position: relative;
+                top: 260px;
+                left: -5%;
+                transform: translateX(170%);
+                z-index: 1000;
+            }
+
+            #medium {
+                position: relative;
+                top: 260px;
+                transform: translateX(170%);
+                left: -0.9%;
+                z-index: 1000;
+            }
+
+            #slow {
+                position: relative;
+                top: 260px;
+                left: -5%;
+                transform: translateX(170%);
+                z-index: 1000;
+            }
+
+            .chart-container {
+                margin-top: 20px;
+                margin-left: -80px;
+            }
+         
     </style>
 </head>
 
@@ -170,6 +262,15 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-4">
+                <div id="watch-container">
+                    <div id="watch-face">
+                        <div id="timecount">
+                            <span class="hours">0</span>:
+                            <span class="minutes">0</span>
+                            <span class="ampm">am</span>
+                        </div>
+                    </div>
+                </div>
                 <button id="fast" class="btn btn-secondary">FAST</button>
                 <button id="medium" class="btn btn-secondary">NRML</button>
                 <button id="slow" class="btn btn-secondary">SLOW</button>
@@ -177,16 +278,6 @@
             <div class="col-md-8">
                 <h1>Analyse Temporelle des Habitudes d'Utilisation des Applications Mobiles</h1>
                 <div id="grouped-content">
-                    <div id="watch-container">
-                        <div id="watch-face">
-                            <div id="timecount">
-                                <span class="hours">0</span>:
-                                <span class="minutes">0</span>
-                                <span class="ampm">am</span>
-                            </div>
-                        </div>
-                    </div>
-
                     <div class="chart-container">
                         <div id="chart"></div>
                         <div class="percentage-chart-container" id="percentage-chart"></div>
@@ -196,6 +287,8 @@
             </div>
         </div>
     </div>
+    
+    
     
     <div id="chart-container">
         <div id="chart"></div>
