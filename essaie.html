@@ -1,54 +1,744 @@
 <!DOCTYPE html>
-<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Barre de basculement jour/nuit avec D3.js</title>
-  <script src="https://d3js.org/d3.v7.min.js"></script>
-  <style>
-    .toggle-bar {
-      width: 90px;
-      height: 40px;
-      border-radius: 20px;
-      background-color: #ddd;
-      position: relative;
-      cursor: pointer;
-    }
-    .toggle-circle {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      background-color: #fff;
-      position: absolute;
-      top: 2px;
-      left: 2px;
-      transition: transform 0.3s ease;
-    }
-  </style>
+    <title>Moving Bubble Tutorial</title>
+    <meta charset="utf-8">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <style>
+
+        #chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 950px;
+            margin: 20px auto 0 auto;            
+        }
+
+        #chart {
+            position: relative;
+            margin-top: -200px;
+            margin-left: -40px;
+        }
+
+        #timecount {
+            position: absolute;
+            top: 10px;
+            left: 0%;
+            transform: translateX(-50%);
+        }
+
+        #watch-container {
+            width: 150px;
+            height: 80px;
+            border: 3px solid #333;
+            background-color: #f1f1f1;
+            border-radius: 10px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 100px 0 0 20px;
+            margin-left: -385px;
+            }
+
+            #watch-face {
+            width: 130px;
+            height: 70px;
+            background-color: #fff;
+            border-radius: 7px;
+            position: relative;
+            }
+
+            #timecount {
+            font-family: 'Roboto', sans-serif;
+            font-size: 24px;
+            font-weight: bold;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex; 
+            align-items: center; 
+            }
+
+            #timecount .hours,
+            #timecount .minutes,
+            #timecount .ampm {
+            padding: 0 5px;
+            display: inline-block;
+            }
+
+            h1 {
+                text-align: center; 
+                font-size: 25px; 
+            }
+
+
+            #fast,
+            #medium,
+            #slow {
+                width: 50px;
+                height: 30px; 
+                position: absolute;
+                bottom: -168px;
+                z-index: 1000;
+                text-align: center; 
+                display: flex;
+                align-items: center; 
+                justify-content: center;
+            }
+
+            #fast {
+                left: 11.7%;
+                transform: translateX(170%);
+            }
+
+            #medium {
+                left: -1%;
+                transform: translateX(170%);
+            }
+
+            #slow {
+                left: -13.7%;
+                transform: translateX(170%);
+            }
+
+            .button-style {
+                font-size: 8px;
+                border: 2px solid #110101; 
+            }
+
+            .container-fluid {
+                height: 50vh; 
+            }
+
+            .row {
+                left: 10.9%;
+                height: 100%; 
+                display: flex;
+                align-items: center; 
+                justify-content: center; 
+            }
+
+            h1 {
+                text-align: center; 
+                margin-left: -300px; 
+            }
+
+            .chart-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #chart {
+            margin-bottom: 20px;
+        }
+
+        .percentage-chart-container {
+            width: 100%;
+            text-align: center;
+        }
+
+        .percentage-chart-container svg {
+            display: block;
+            margin: auto;
+        }
+            
+    </style>
 </head>
+
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+
 <body>
+    
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-4">
+                <button id="fast" class="btn btn-secondary">FAST</button>
+                <button id="medium" class="btn btn-secondary">NRML</button>
+                <button id="slow" class="btn btn-secondary">SLOW</button>
+            </div>
+            <div class="col-md-8">
+                <h1>Analyse Temporelle des Habitudes d'Utilisation des Applications Mobiles</h1>
+                <div id="grouped-content">
+                    <div id="watch-container">
+                        <div id="watch-face">
+                            <div id="timecount">
+                                <span class="hours">0</span>:
+                                <span class="minutes">0</span>
+                                <span class="ampm">am</span>
+                            </div>
+                        </div>
+                    </div>
 
-<div class="toggle-bar" id="toggleBar">
-  <div class="toggle-circle"></div>
-</div>
+                    <div class="chart-container">
+                        <div id="chart"></div>
+                        <div class="percentage-chart-container" id="percentage-chart"></div>
+                        <span id="selectedTime">Selected time: </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="chart-container">
+        <div id="chart"></div>
+    </div>
 
-<script>
-  const toggleBar = d3.select("#toggleBar");
+<script src="https://d3js.org/d3.v7.min.js"></script>
 
-  function toggleMode() {
-    const circle = toggleBar.select(".toggle-circle");
-    const isNightMode = circle.node().getBoundingClientRect().left > 20;
+<script>  
 
-    if (isNightMode) {
-      toggleBar.style("background-color", "#ddd");
-      circle.style("transform", "translateX(0)");
-    } else {
-      toggleBar.style("background-color", "#333");
-      circle.style("transform", "translateX(100px)");
+var margin = {top: 16, right: 0, bottom: 0, left: 0},
+    width = 950 - margin.left - margin.right,
+    height = 700 - margin.top - margin.bottom;
+
+const timeCounter = d3.select("#timecount");
+const hoursSpan = timeCounter.select('.hours');
+const minutesSpan = timeCounter.select('.minutes');
+    
+var node_radius = 5,
+    padding = 5,
+    cluster_padding = 30;
+    //circle_radius = 300;
+
+var svg = d3.select("#chart").append("svg")
+    .attr("width", width + margin.left + margin.right + 500)
+    .attr("height", height + margin.top + margin.bottom + 500)
+    .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+//lune
+var moon = svg.append('image')
+    .attr('href', 'image/lune.png') 
+    .style('display', 'none')
+    .attr('width', 30)
+    .attr('height', 30)
+    .attr('x', 10) 
+    .attr('y', 30);
+    
+//soleil
+var sun = svg.append('image')
+    .attr('href', 'image/soleil.png') 
+    .style('display', 'none')
+    .attr('width', 40)
+    .attr('height', 40)
+    .attr('x', 10) 
+    .attr('y', 30);
+
+//nuit
+var night = svg.append('image')
+    .attr('href', 'image/nuit.jpg') 
+    .style('display', 'none')
+    .attr('width', 40)
+    .attr('height', 40)
+    .attr('x', 10) 
+    .attr('y', 30);
+
+var days,
+    nodes;
+var groups = {};
+
+
+d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
+    var uniqueGroups = Array.from(new Set(data.map(d => d.grp)));
+    var colorScale =  d3.scaleOrdinal()
+    .range([
+        '#FFC0CB', 
+        '#8A2BE2',
+        '#87CEEB', 
+        '#FFA07A', 
+        '#20B2AA',
+        '#FF6347', 
+        '#00FFFF', 
+        '#FFD700', 
+        '#32CD32', 
+        '#E9967A', 
+        '#9370DB', 
+        '#48D1CC', 
+        '#FF1493', 
+        '#00FF7F'  
+    ]); 
+
+    uniqueGroups.forEach(function(group, index) {
+        groups[group] = {
+            color: colorScale(index),
+            cnt: 0,
+            fullname: group,
+            x: 0, // I will change x, y later
+            y: 0
+        };
+    });
+
+    const centerX = width / 2;
+    const centerY = height / 2;
+    const radius = 330; // rayon du cercle pour les clusters
+
+    // Position du cluster central
+    groups["Screen off (locked)"].x = centerX + 50;
+    groups["Screen off (locked)"].y = centerY + 200;
+
+    const totalClusters = Object.keys(groups).length - 1; 
+    const angleOffset = (2 * Math.PI) / totalClusters;
+
+    let index = 0;
+    for (const group in groups) {
+        if (group !== "Screen off (locked)") {
+            const currentAngle = index * angleOffset;
+            groups[group].x = centerX + radius * Math.cos(currentAngle) + 50;
+            groups[group].y = centerY + radius * Math.sin(currentAngle) + 140;
+            index++;
+        }
     }
-  }
 
-  toggleBar.on("click", toggleMode);
+    const images = svg.selectAll('.appImage')
+        .data(Object.keys(groups))
+        .join('image')
+        .attr('class', 'appImage')
+        .attr('xlink:href', d => `image/${d}.png`) //nom d'icone correspondant
+        .attr('width', 40)
+        .attr('height', 40)
+        .attr('x', d => groups[d].x - 20)
+        .attr('y', d => groups[d].y - 130);
+
+
+    console.log("---------GROUPS----------");
+    console.log(groups)
+    console.log("-------------------");
+
+    days = {};
+    // Gather all the same pids
+    data.forEach(d => {
+        if (Object.keys(days).includes(d.pid + "")) {
+            days[d.pid + ""].push(d);
+        } else {
+            days[d.pid + ""] = [d];
+        }
+    });
+    
+    console.log("----------DAYS---------");
+    console.log(days);
+    console.log("-------------------");
+
+
+    nodes = Object.keys(days).map(function(d) {
+        console.log(days[d][0].duration)
+
+        groups[days[d][0].grp].cnt += 1;
+        return {
+            id: "node"+d,
+            x: groups[days[d][0].grp].x + Math.random(),
+            y: groups[days[d][0].grp].y + Math.random(),
+            r: node_radius,
+            color: groups[days[d][0].grp].color,
+            group: days[d][0].grp,
+            timeleft: days[d][0].duration,
+            istage: 0,
+            stages: days[d]
+        }
+        });
+
+    console.log("-------------------");
+    console.log(nodes);
+    console.log("-------------------");
+
+
+    // Variables
+    let time_so_far = 0;
+
+    // Circle for each node
+    const circle = svg.selectAll("circle")
+        .data(nodes)
+        .join("circle")
+        .attr("cx", d => d.x)
+        .attr("cy", d => d.y)
+        .attr("fill", d => d.color);
+
+    // Ease in the circles
+    circle.transition()
+        .delay((d, i) => i * 5)
+        .duration(800)
+        .attrTween("r", d => {
+            const i = d3.interpolate(0, d.r );
+            return t => d.r = i(t);
+        });
+
+    // Group name labels
+    const groupLabels = svg.selectAll('.grp')
+        .data(Object.keys(groups))
+        .join("text")
+        .attr("class", "grp")
+        .attr("text-anchor", "middle")
+        .attr("x", d => groups[d].x )
+        .attr("y", d => groups[d].y - 70)
+        .text(d => groups[d].fullname);
+
+    // Group counts.
+    const groupCounts = svg.selectAll('.grpcnt')
+        .data(Object.keys(groups))
+        .join("text")
+        .attr("class", "grpcnt")
+        .attr("text-anchor", "middle")
+        .attr("x", d => groups[d].x)
+        .attr("y", d => groups[d].y - 50)
+        .text(d => groups[d].cnt);
+
+    // Forces.
+    const simulation = d3.forceSimulation(nodes)
+        .force("x", d => d3.forceX(d.x))
+        .force("y", d => d3.forceY(d.y))
+        .force("cluster", forceCluster())
+        .force("collide", forceCollide())
+        .alpha(.09)
+        .alphaDecay(0);
+
+    simulation.on("tick", () => {
+    const centerX = width / 2;
+    const centerY = height / 2;
+    const scaleFactor = 1.3;
+
+    circle.attr("fill", d => groups[d.group].color);
+
+    // Déplace les bulles du cluster "Screen off (locked)" au-dessus des autres clusters
+    circle.filter(d => d.group === "Screen off (locked)")
+        .attr("cx", d => centerX + 10 + (d.x - centerX) / scaleFactor)
+        .attr("cy", d => centerY - 150 + (d.y - centerY) / scaleFactor);
+
+    // Pour les autres clusters, garde la position inchangée
+    circle.filter(d => d.group !== "Screen off (locked)")
+        .attr("cx", d => centerX + 20 + (d.x - centerX) / scaleFactor)
+        .attr("cy", d => centerY - 50 + (d.y - centerY) / scaleFactor);
+});
+
+
+
+    let intervalID = null;
+    let timeMultiplier = 1;
+
+//fonctions
+    function timer() {
+        nodes.forEach(function (o) {
+            o.timeleft -= 1;
+            if (o.timeleft === 0 && o.istage < o.stages.length - 1) {
+                groups[o.group].cnt -= 1;
+                o.istage += 1;
+                o.group = o.stages[o.istage].grp;
+                o.timeleft = o.stages[o.istage].duration;
+                groups[o.group].cnt += 1;
+            }
+        });
+        time_so_far += 1;
+        const hours = Math.floor(time_so_far / 60);
+        const minutes = Math.floor(time_so_far % 60);
+        let amPm = 'am';
+
+        if (hours >= 24) {
+        hours = 0; 
+        }
+
+        if (hours >= 12) {
+            amPm = 'pm'; 
+        }
+
+        if (hours < 12) {
+            amPm = 'am'; 
+        }
+
+        document.querySelector('.ampm').textContent = amPm;
+
+        if (hours >= 6 && hours < 17) {
+            moon.style('display', 'none');
+            sun.style('display', 'block');
+            night.style('display', 'none');
+        } else{
+            moon.style('display', 'block');
+            sun.style('display', 'none');
+            night.style('display', 'none');
+        }
+
+        if (hours >= 17) {
+        const visualizationText = document.querySelectorAll('.grp, .grpcnt, h1');
+        visualizationText.forEach(element => {
+            element.style.color = "white";
+            element.style.fill = "white";
+            document.body.style.backgroundColor = "black";
+        });
+        moon.style('display', 'none');
+        sun.style('display', 'none');
+        night.style('display', 'block');
+
+         } else {
+        const visualizationText = document.querySelectorAll('.grp, .grpcnt, h1');
+        visualizationText.forEach(element => {
+            element.style.fill = "black";
+            element.style.color = "black";
+            document.body.style.backgroundColor = "white";
+        });
+        }          
+        
+        hoursSpan.text(hours);
+        minutesSpan.text(minutes);
+        groupCounts.text(d => groups[d].cnt);
+    }
+
+    function controlSpeed(speedMultiplier) {
+        if (intervalID) {
+            clearInterval(intervalID);
+        }
+
+        intervalID = setInterval(() => {
+            timer();
+        }, 1000 / speedMultiplier);
+    }
+
+    controlSpeed(timeMultiplier);
+
+    document.getElementById("fast").addEventListener("click", function() {
+        timeMultiplier = 6;
+        controlSpeed(timeMultiplier);
+    });
+
+    document.getElementById("slow").addEventListener("click", function() {
+        timeMultiplier = 0.2;
+        controlSpeed(timeMultiplier);
+    });
+
+    document.getElementById("medium").addEventListener("click", function() {
+        timeMultiplier = 1;
+        controlSpeed(timeMultiplier);
+    });
+
+            
+        
+    });  
+
+    function forceCluster() {
+        const strength = .15;
+        let nodes;
+
+        function force(alpha) {
+            const l = alpha * strength;
+            for (const d of nodes) {
+            d.vx -= (d.x - groups[d.group].x) * l;
+            d.vy -= (d.y - groups[d.group].y) * l;
+            }
+        }
+        force.initialize = _ => nodes = _;
+
+        return force;
+        }
+
+    function forceCollide() {
+        const alpha = 0.2; // Fixed for greater rigidity
+        const padding1 = padding; // Separation between same-color nodes
+        const padding2 = cluster_padding; // Separation between different-color nodes
+        let nodes;
+        let maxRadius;
+
+        function force() {
+            const quadtree = d3.quadtree(nodes, d => d.x, d => d.y);
+
+            for (const d of nodes) {
+                const r = d.r + maxRadius;
+                const nx1 = d.x - r, ny1 = d.y - r;
+                const nx2 = d.x + r, ny2 = d.y + r;
+
+                quadtree.visit((q, x1, y1, x2, y2) => {
+                    if (!q.length) {
+                        do {
+                            if (q.data !== d) {
+                                const r = d.r + q.data.r + (d.group === q.data.group ? padding1 : padding2);
+                                let x = d.x - q.data.x, y = d.y - q.data.y, l = Math.hypot(x, y);
+
+                                if (l < r) {
+                                    l = (l - r) / l * alpha;
+                                    d.x -= x *= l, d.y -= y *= l;
+                                    q.data.x += x, q.data.y += y;
+                                }
+                            }
+                        } while (q = q.next);
+
+                        return x1 > nx2 || x2 < nx1 || y1 > ny2 || y2 < ny1;
+                    }
+                });
+            }
+        }
+
+        force.initialize = _ => maxRadius = d3.max(nodes = _, d => d.r) + Math.max(padding1, padding2);
+
+        return force;
+    }
+
+    var percentageSvg;
+
+d3.csv("data/static_visualization.csv").then(function(data) {
+    var apps = data.map(d => d["App name"]);
+    var times = Object.keys(data[0]).slice(1);
+
+    var margin = {top: 5, right: 20, bottom: 30, left: 120},
+        width = 1800 - margin.left - margin.right,
+        height = 450 - margin.top - margin.bottom;
+
+    var xScale = d3.scaleBand()
+        .domain(times)
+        .range([0, width])
+        .padding(0.1);
+
+    var yScale = d3.scaleBand()
+        .domain(apps)
+        .range([height, 0])
+        .padding(0.1);
+
+    var colorScale = d3.scaleSequential(d3.interpolateReds)
+        .domain([0, d3.max(data, d => d3.max(times, t => +d[t]))]);
+
+    var svg = d3.select("#chart")
+        .append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    var rectangles = svg.selectAll()
+        .data(data, function(d) { return d["App name"]; })
+        .enter()
+        .selectAll("rect")
+        .data(function(d) {
+            return times.map(function(time) {
+                return { app: d["App name"], time: time, value: +d[time] };
+            });
+        })
+        .enter()
+        .append("rect")
+        .attr("x", function(d) { return xScale(d.time); })
+        .attr("y", function(d) { return yScale(d.app); })
+        .attr("width", xScale.bandwidth())
+        .attr("height", yScale.bandwidth())
+        .style("fill", function(d) { return colorScale(d.value); })
+        .attr("stroke", "none");
+
+    svg.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(0," + height + ")")
+        .call(d3.axisBottom(xScale).tickSize(0))
+        .selectAll("text")
+        .attr("transform", "rotate(-45)")
+        .style("font-weight", "bold")
+        .style("text-anchor", "end");
+
+    svg.append("g")
+        .attr("class", "y axis")
+        .style("font-weight", "bold")
+        .call(d3.axisLeft(yScale));
+
+    percentageSvg = d3.select("#percentage-chart")
+        .append("svg")
+        .attr("width", width)
+        .attr("height", 350)
+        .append("g")
+        .attr("transform", "translate(" + width / 2 + "," + 160 + ")"); // Adjusted translation
+
+    function updatePercentageChart(selectedTime) {
+        percentageSvg.selectAll("*").remove();
+
+        var percentages = data.map(function(d) {
+            var totalValue = d3.sum(data.map(function(row) {
+                return +row[selectedTime];
+            }));
+
+            return {
+                app: d["App name"],
+                percentage: (d[selectedTime] / totalValue) * 100
+            };
+        });
+
+        var pie = d3.pie().value(d => d.percentage);
+
+        var arc = d3.arc()
+            .innerRadius(0)
+            .outerRadius(140);
+
+        var color = d3.scaleOrdinal(d3.schemeCategory10);
+
+        var sortedData = percentages.slice().sort((a, b) => b.percentage - a.percentage);
+        var top6Data = pie(sortedData.slice(0, 6));
+
+        percentageSvg.selectAll("path")
+            .data(top6Data)
+            .enter()
+            .append("path")
+            .attr("d", arc)
+            .attr("fill", (d, i) => color(i));
+
+        // Handle both icon and text
+        var elements = percentageSvg.selectAll(".icon-text-group")
+            .data(top6Data)
+            .enter()
+            .append("g")
+            .attr("class", "icon-text-group");
+
+        elements.append("image")
+            .attr("x", d => arc.centroid(d)[0] - 15) 
+            .attr("y", d => arc.centroid(d)[1] - 15) 
+            .attr("height", 40)
+            .attr("xlink:href", d => 'image/' + d.data.app + '.png'); 
+
+        elements.append("text")
+            .attr("transform", d => {
+                var centroid = arc.centroid(d);
+                var x = centroid[0];
+                var y = centroid[1];
+
+                // Avoid overlapping with icon (From stackoverflow)
+                var distance = 80; 
+                var angle = Math.atan2(y, x);
+                var newX = x + distance * Math.cos(angle);
+                var newY = y + distance * Math.sin(angle);
+                console.log(x,y,newX,newY)
+                return `translate(${newX}, ${newY})`;
+            })
+            .text(d => `${d3.format(".1f")(d.data.percentage)}%`)
+            .style("text-anchor", d => (arc.centroid(d)[0] > 0) ? "start" : "end") // Adjust text anchor based on the position
+            .style("fill", "black")
+            .style("font-weight", "bold");
+
+    }
+
+    var sliderContainer = d3.select(".chart-container");
+    var slider = sliderContainer.append("input")
+        .attr("id", "slider")
+        .attr("type", "range")
+        .attr("value", "0")
+        .attr("min", "0")
+        .attr("max", times.length - 1)
+        .attr("step", "1")
+        .style("width", width + "px");
+
+    var selectedTimeElement = d3.select("#selectedTime");
+
+    slider.on("input", function () {
+        var selectedTimeIndex = +this.value;
+        var selectedTime = times[selectedTimeIndex];
+
+        selectedTimeElement.html("Selected time: " + selectedTime);
+        rectangles
+            .attr("stroke", "none")
+            .attr("stroke-width", 1);
+        rectangles
+            .filter(function (d) {
+                return d.time === selectedTime;
+            })
+            .attr("stroke", "green") 
+            .attr("stroke-width", 2);
+
+        updatePercentageChart(selectedTime);
+    });
+
+});
+
+    
+   
 </script>
-
 </body>
 </html>
