@@ -1,172 +1,133 @@
-/*#chart-container {
-  position: relative;
-  width: 100%;
-  max-width: 950px;
-  margin: 20px auto 0 auto;            
-}
+<style>
 
-#chart {
-  position: relative;
-  margin-top: -200px;
-  margin-left: -40px;
-}
-
-/*#timecount {
-  position: absolute;
-  top: 10px;
-  left: 0%;
-  transform: translateX(-50%);
-} */
-
-/*#watch-container {
-  /*width: 150px;
-  height: 80px;
-  bottom: 285px;
-
-  border: 3px solid #333;
-  background-color: #f1f1f1;
-  border-radius: 10px;
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 100px 0 0 20px;
-  margin-left: -385px;
-  margin: 100px 0 0 20px;
-  margin-left: -385px;
-  position: relative;
-  top: 520px;
-  }*/
-
-/* #watch-face {
-  bottom: 285px;
-  width: 130px;
-  height: 70px;
-  background-color: #fff;
-  border-radius: 7px;
-  position: relative;
-
+  #watch-container {
+      position: relative;
+      top: 260px;
+      right: -25%;
+      width: 150px;
+      height: 80px;
+      border: 3px solid #333;
+      background-color: #f1f1f1;
+      border-radius: 10px;
+      margin: 20px 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
   }
 
-#timecount {
-  font-family: 'Roboto', sans-serif;
-  font-size: 24px;
-  font-weight: bold;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  display: flex; 
-  align-items: center; 
+  #watch-face {
+      width: 130px;
+      height: 70px;
+      top: 0px;
+      background-color: #ffffff;
+      border-radius: 7px;
+      position: relative;
+  }
+
+  #timecount {
+      font-family: 'Roboto', sans-serif;
+      font-size: 24px;
+      font-weight: bold;
+      position: absolute;
+      top: 35px;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      display: flex;
+      align-items: center;
   }
 
   #timecount .hours,
   #timecount .minutes,
   #timecount .ampm {
-  padding: 0 5px;
-  display: inline-block;
+      padding: 0 5px;
+      display: inline-block;
   }
-
+  
   #fast,
   #medium,
   #slow {
-      /*margin-top: 2220px; 
       width: 50px;
       height: 30px; 
+      z-index: 1000;
+      text-align: center; 
+      display: flex;
+      align-items: center; 
+      justify-content: center;
       position: absolute;
-      bottom: 285px;
-      z-index: 1000;
-      text-align: center; 
-      display: flex;
-      align-items: center; 
-      justify-content: center;
-      position: relative;
-      top: 270px;
-  }*/
+  }
 
-  /*#fast {
-      left: 3.3%;
+  #fast {
+      top: 360px;
+      left: 10%;
       transform: translateX(170%);
-      z-index: 1000;
-      text-align: center; 
-      display: flex;
-      align-items: center; 
-      justify-content: center;
+      bottom: 4000px;
   }
 
   #medium {
+      top: 360px;
       transform: translateX(170%);
-      left: -0.9%;
-      transform: translateX(170%);
+      left: 6%;
   }
 
   #slow {
-      left: -5%;
+      top: 360px;
+      left: 1.9%;
       transform: translateX(170%);
   }
 
   #button-style {
       font-size: 8px;
-      border: 2px solid #110101; 
-  }*/
-
-  /*#container-fluid {
-      height: 50vh; 
-      left: -13.7%;
-      transform: translateX(170%);
   }
 
-  #button-style {
-      font-size: 8px;
-      border: 2px solid #110101; 
+  #chart-container {
+      position: relative;
+      width: 4200px; /* Augmentez la largeur du conteneur selon vos besoins */
+      margin: 20px auto 0 auto;
+      margin-top: 20px;
+      margin-left: -220px;
   }
 
-  #container-fluid {
-      height: 50vh; 
-  }
-
-  #row {
-      left: 10.9%;
-      height: 100%; 
-      display: flex;
-      align-items: center; 
-      justify-content: center; 
+  #chart {
+      position: relative;
+      width: 1200px;
+      margin-left: -300px;
   }
 
   #h1 {
-      text-align: center; 
-      margin-left: -300px; 
-      text-align: center; 
+      margin-left: -1400px; 
       font-size: 25px;
   }
 
-  .chart-container {
-      margin-top: 20px; 
-      margin-left: -300px; 
-  }
+</style>
+</head>
 
-  #chart {
-      margin-bottom: 20px;
-      margin-left: 100px; 
-      bottom: -185px;
-  }*/
+<body>
 
-  /*#chart-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-  }
-
-  #chart {
-      margin-bottom: 20px;
-  }
-
-  #percentage-chart-container {
-      width: 100%;
-      text-align: center;
-  }
-
-  #percentage-chart-container svg {
-      display: block;
-      margin: auto;
-  }*/
+<div class="container-fluid">
+<div class="row">
+  <div class="col-md-4">
+      <div id="watch-container">
+          <div id="watch-face">
+              <div id="timecount">
+                  <span class="hours">0</span>:
+                  <span class="minutes">0</span>
+                  <span class="ampm">am</span>
+              </div>
+          </div>
+      </div>
+      <button id="fast" class="btn btn-secondary">FAST</button>
+      <button id="medium" class="btn btn-secondary">NRML</button>
+      <button id="slow" class="btn btn-secondary">SLOW</button>
+  </div>
+  <div class="col-md-8">
+      <h1>Analyse Temporelle des Habitudes d'Utilisation des Applications Mobiles</h1>
+      <div id="grouped-content">
+          <div class="chart-container">
+              <div id="chart"></div>
+              <div class="percentage-chart-container" id="percentage-chart"></div>
+              <span id="selectedTime">Selected time: </span>
+          </div>
+      </div>
+  </div>
+</div>
+</div>

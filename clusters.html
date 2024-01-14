@@ -6,140 +6,122 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
 
-   <style>
+    <style>
+        .container {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 20px;
+        }
 
-            #watch-container {
-                position: relative;
-                top: 260px;
-                right: -25%;
-                width: 150px;
-                height: 80px;
-                border: 3px solid #333;
-                background-color: #f1f1f1;
-                border-radius: 10px;
-                margin: 20px 0;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
+        #watch-container {
+            position: relative;
+            top: 400px;
+            right: -25%;
+            width: 150px;
+            height: 80px;
+            border: 3px solid #333;
+            background-color: #f1f1f1;
+            border-radius: 10px;
+            margin: 20px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
-            #watch-face {
-                width: 130px;
-                height: 70px;
-                top: 0px;
-                background-color: #ffffff;
-                border-radius: 7px;
-                position: relative;
-            }
+        #watch-face {
+            width: 130px;
+            height: 70px;
+            top: 0px;
+            background-color: #ffffff;
+            border-radius: 7px;
+            position: relative;
+        }
 
-            #timecount {
-                font-family: 'Roboto', sans-serif;
-                font-size: 24px;
-                font-weight: bold;
-                position: absolute;
-                top: 35px;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                display: flex;
-                align-items: center;
-            }
+        #timecount {
+            font-family: 'Roboto', sans-serif;
+            font-size: 24px;
+            font-weight: bold;
+            position: absolute;
+            top: 35px;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            align-items: center;
+        }
 
-            #timecount .hours,
-            #timecount .minutes,
-            #timecount .ampm {
-                padding: 0 5px;
-                display: inline-block;
-            }
-            
-            #fast,
-            #medium,
-            #slow {
-                width: 50px;
-                height: 30px; 
-                z-index: 1000;
-                text-align: center; 
-                display: flex;
-                align-items: center; 
-                justify-content: center;
-                position: absolute;
-            }
+        #timecount .hours,
+        #timecount .minutes,
+        #timecount .ampm {
+            padding: 0 5px;
+            display: inline-block;
+        }
 
-            #fast {
-                top: 360px;
-                left: 10%;
-                transform: translateX(170%);
-                bottom: 4000px;
-            }
+        #buttons-container {
+            grid-column: span 3;
+            display: flex;
+            justify-content: flex-start; /* Modifiez de space-between à flex-start */
+            position: relative;
+            top: 500px;
+            left: -134px;
+        }
 
-            #medium {
-                top: 360px;
-                transform: translateX(170%);
-                left: 6%;
-            }
+        #fast,
+        #medium,
+        #slow {
+            width: 50px;
+            height: 30px;
+            z-index: 1000;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
-            #slow {
-                top: 360px;
-                left: 1.9%;
-                transform: translateX(170%);
-            }
+        #chart-container {
+            grid-column: span 6;
+            position: relative;
+            width: 100%; 
+            margin: 20px 0;
+        }
 
-            #button-style {
-                font-size: 8px;
-            }
+        #chart {
+            width: 100%;
+            height: 500px; 
+        }
 
-            #chart-container {
-                position: relative;
-                width: 4200px; /* Augmentez la largeur du conteneur selon vos besoins */
-                margin: 20px auto 0 auto;
-                margin-top: 20px;
-                margin-left: -220px;
-            }
-
-            #chart {
-                position: relative;
-                width: 1200px;
-                margin-left: -300px;
-            }
-
-            #h1 {
-                margin-left: -1400px; 
-                font-size: 25px;
-            }
-         
+        #h1 {
+            grid-column: span 12;
+            font-size: 25px;
+            text-align: center;
+        }
     </style>
 </head>
 
 <body>
-    
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-md-4">
-                <div id="watch-container">
-                    <div id="watch-face">
-                        <div id="timecount">
-                            <span class="hours">0</span>:
-                            <span class="minutes">0</span>
-                            <span class="ampm">am</span>
-                        </div>
-                    </div>
-                </div>
-                <button id="fast" class="btn btn-secondary">FAST</button>
-                <button id="medium" class="btn btn-secondary">NRML</button>
-                <button id="slow" class="btn btn-secondary">SLOW</button>
-            </div>
-            <div class="col-md-8">
-                <h1>Analyse Temporelle des Habitudes d'Utilisation des Applications Mobiles</h1>
-                <div id="grouped-content">
-                    <div class="chart-container">
-                        <div id="chart"></div>
-                        <div class="percentage-chart-container" id="percentage-chart"></div>
-                        <span id="selectedTime">Selected time: </span>
-                    </div>
+    <div class="container">
+        <div id="watch-container">
+            <div id="watch-face">
+                <div id="timecount">
+                    <span class="hours">0</span>:
+                    <span class="minutes">0</span>
+                    <span class="ampm">am</span>
                 </div>
             </div>
         </div>
+
+        <div id="buttons-container">
+            <button id="fast" class="btn btn-secondary">FAST</button>
+            <button id="medium" class="btn btn-secondary">NRML</button>
+            <button id="slow" class="btn btn-secondary">SLOW</button>
+        </div>
+
+        <h1 id="h1">Analyse Temporelle des Habitudes d'Utilisation des Applications Mobiles</h1>
+
+        <div id="chart-container">
+            <div id="chart"></div>
+            <div class="percentage-chart-container" id="percentage-chart"></div>
+        </div>
     </div>
-    
     
     
     <div id="chart-container">
@@ -175,8 +157,8 @@ var moon = svg.append('image')
     .style('display', 'none')
     .attr('width', 30)
     .attr('height', 30)
-    .attr('x', 55) 
-    .attr('y', 100);
+    .attr('x', 95) 
+    .attr('y', 140);
     
 //soleil
 var sun = svg.append('image')
