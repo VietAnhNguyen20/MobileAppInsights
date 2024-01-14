@@ -38,6 +38,8 @@
             justify-content: center;
             margin: 100px 0 0 20px;
             margin-left: -385px;
+            margin: 100px 0 0 20px;
+            margin-left: -385px;
             }
 
             #watch-face {
@@ -78,7 +80,24 @@
             #slow {
                 width: 50px;
                 height: 30px; 
+
+            #fast,
+            #medium,
+            #slow {
+                width: 50px;
+                height: 30px; 
                 position: absolute;
+                bottom: -168px;
+                z-index: 1000;
+                text-align: center; 
+                display: flex;
+                align-items: center; 
+                justify-content: center;
+            }
+
+            #fast {
+                left: 11.7%;
+                transform: translateX(170%);
                 bottom: -168px;
                 z-index: 1000;
                 text-align: center; 
@@ -95,6 +114,8 @@
             #medium {
                 left: -1%;
                 transform: translateX(170%);
+                left: -1%;
+                transform: translateX(170%);
             }
 
             #slow {
@@ -109,8 +130,28 @@
 
             .container-fluid {
                 height: 50vh; 
+                left: -13.7%;
+                transform: translateX(170%);
             }
 
+            .button-style {
+                font-size: 8px;
+                border: 2px solid #110101; 
+            }
+
+            .container-fluid {
+                height: 50vh; 
+            }
+
+            .row {
+                left: 10.9%;
+                height: 100%; 
+                display: flex;
+                align-items: center; 
+                justify-content: center; 
+            }
+
+            h1 {
             .row {
                 left: 10.9%;
                 height: 100%; 
@@ -150,6 +191,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+
 <body>
     
     <div class="container-fluid">
@@ -158,12 +202,21 @@
                 <button id="fast" class="btn btn-secondary">FAST</button>
                 <button id="medium" class="btn btn-secondary">NRML</button>
                 <button id="slow" class="btn btn-secondary">SLOW</button>
+                <button id="fast" class="btn btn-secondary">FAST</button>
+                <button id="medium" class="btn btn-secondary">NRML</button>
+                <button id="slow" class="btn btn-secondary">SLOW</button>
             </div>
             <div class="col-md-8">
                 <h1>Analyse Temporelle des Habitudes d'Utilisation des Applications Mobiles</h1>
                 <div id="grouped-content">
+                <div id="grouped-content">
                     <div id="watch-container">
                         <div id="watch-face">
+                            <div id="timecount">
+                                <span class="hours">0</span>:
+                                <span class="minutes">0</span>
+                                <span class="ampm">am</span>
+                            </div>
                             <div id="timecount">
                                 <span class="hours">0</span>:
                                 <span class="minutes">0</span>
