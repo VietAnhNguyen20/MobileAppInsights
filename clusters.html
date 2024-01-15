@@ -528,7 +528,7 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
             var apps = data.map(d => d["App name"]);
             var times = Object.keys(data[0]).slice(1);
 
-            var margin = {top: 5, right: 20, bottom: 30, left: 120},
+            var margin = {top: 5, right: 20, bottom: 30, left: 10},
                 width = 1800 - margin.left - margin.right,
                 height = 450 - margin.top - margin.bottom;
 
@@ -550,7 +550,7 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
                 .attr("width", width + margin.left + margin.right)
                 .attr("height", height + margin.top + margin.bottom)
                 .append("g")
-                .attr("transform", "translate(" + margin.left + "," + margin.top   + ")");
+                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
             var rectangles = svg.selectAll()
                 .data(data, function(d) { return d["App name"]; })
@@ -671,7 +671,6 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
             .attr("min", "0")
             .attr("max", times.length - 1)
             .attr("step", "1")
-            .style("width", width + "px")
             .style("width", "290%")
             .style("bottom", "100px")  
             .style("height", "30px");
@@ -684,7 +683,7 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
             .style("font-weight", "bold");  
 
             slider.on("input", function () {
-                var selectedTimeIndex = +this.value;
+                var selectedTimeIndex = + this.value;
                 var selectedTime = times[selectedTimeIndex];
 
                 selectedTimeElement.html("Selected time: " + selectedTime);
