@@ -59,7 +59,7 @@
         #buttons-container {
             grid-column: span 3;
             display: flex;
-            justify-content: flex-start; /* Modifiez de space-between à flex-start */
+            justify-content: flex-start; 
             position: relative;
             top: 500px;
             left: -134px;
@@ -94,6 +94,17 @@
             font-size: 25px;
             text-align: center;
         }
+
+        .percentage-chart-container {
+            width: 100%;
+            text-align: center;
+        }
+
+        .percentage-chart-container svg {
+            display: block;
+            margin: auto;
+        }
+
     </style>
 </head>
 
@@ -123,10 +134,7 @@
         </div>
     </div>
     
-    
-    <div id="chart-container">
-        <div id="chart"></div>
-    </div>
+
 
 <script src="https://d3js.org/d3.v7.min.js"></script>
 
@@ -512,175 +520,186 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
         return force;
     }
 
+
+    //###############Second and Third Visualisations########################
     var percentageSvg;
 
-d3.csv("data/static_visualization.csv").then(function(data) {
-    var apps = data.map(d => d["App name"]);
-    var times = Object.keys(data[0]).slice(1);
+    d3.csv("data/static_visualization.csv").then(function(data) {
+        var apps = data.map(d => d["App name"]);
+        var times = Object.keys(data[0]).slice(1);
 
-    var margin = {top: 5, right: 20, bottom: 30, left: 120},
-        width = 1800 - margin.left - margin.right,
-        height = 450 - margin.top - margin.bottom;
+        var margin = {top: 5, right: 20, bottom: 30, left: 120},
+            width = 1800 - margin.left - margin.right,
+            height = 450 - margin.top - margin.bottom;
 
-    var xScale = d3.scaleBand()
-        .domain(times)
-        .range([0, width])
-        .padding(0.1);
+        var xScale = d3.scaleBand()
+            .domain(times)
+            .range([0, width])
+            .padding(0.1);
 
-    var yScale = d3.scaleBand()
-        .domain(apps)
-        .range([height, 0])
-        .padding(0.1);
+        var yScale = d3.scaleBand()
+            .domain(apps)
+            .range([height, 0])
+            .padding(0.1);
 
-    var colorScale = d3.scaleSequential(d3.interpolateReds)
-        .domain([0, d3.max(data, d => d3.max(times, t => +d[t]))]);
+        var colorScale = d3.scaleSequential(d3.interpolateReds)
+            .domain([0, d3.max(data, d => d3.max(times, t => +d[t]))]);
 
-    var svg = d3.select("#chart")
-        .append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
-        .append("g")
-        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-    var rectangles = svg.selectAll()
-        .data(data, function(d) { return d["App name"]; })
-        .enter()
-        .selectAll("rect")
-        .data(function(d) {
-            return times.map(function(time) {
-                return { app: d["App name"], time: time, value: +d[time] };
-            });
-        })
-        .enter()
-        .append("rect")
-        .attr("x", function(d) { return xScale(d.time); })
-        .attr("y", function(d) { return yScale(d.app); })
-        .attr("width", xScale.bandwidth())
-        .attr("height", yScale.bandwidth())
-        .style("fill", function(d) { return colorScale(d.value); })
-        .attr("stroke", "none");
-
-    svg.append("g")
-        .attr("class", "x axis")
-        .attr("transform", "translate(0," + height + ")")
-        .call(d3.axisBottom(xScale).tickSize(0))
-        .selectAll("text")
-        .attr("transform", "rotate(-45)")
-        .style("font-weight", "bold")
-        .style("text-anchor", "end");
-
-    svg.append("g")
-        .attr("class", "y axis")
-        .style("font-weight", "bold")
-        .call(d3.axisLeft(yScale));
-
-    percentageSvg = d3.select("#percentage-chart")
-        .append("svg")
-        .attr("width", width)
-        .attr("height", 350)
-        .append("g")
-        .attr("transform", "translate(" + width / 2 + "," + 160 + ")"); // Adjusted translation
-
-    function updatePercentageChart(selectedTime) {
-        percentageSvg.selectAll("*").remove();
-
-        var percentages = data.map(function(d) {
-            var totalValue = d3.sum(data.map(function(row) {
-                return +row[selectedTime];
-            }));
-
-            return {
-                app: d["App name"],
-                percentage: (d[selectedTime] / totalValue) * 100
-            };
-        });
-
-        var pie = d3.pie().value(d => d.percentage);
-
-        var arc = d3.arc()
-            .innerRadius(0)
-            .outerRadius(140);
-
-        var color = d3.scaleOrdinal(d3.schemeCategory10);
-
-        var sortedData = percentages.slice().sort((a, b) => b.percentage - a.percentage);
-        var top6Data = pie(sortedData.slice(0, 6));
-
-        percentageSvg.selectAll("path")
-            .data(top6Data)
-            .enter()
-            .append("path")
-            .attr("d", arc)
-            .attr("fill", (d, i) => color(i));
-
-        // Handle both icon and text
-        var elements = percentageSvg.selectAll(".icon-text-group")
-            .data(top6Data)
-            .enter()
+        var svg = d3.select("#chart")
+            .append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
             .append("g")
-            .attr("class", "icon-text-group");
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-        elements.append("image")
-            .attr("x", d => arc.centroid(d)[0] - 15) 
-            .attr("y", d => arc.centroid(d)[1] - 15) 
-            .attr("height", 40)
-            .attr("xlink:href", d => 'image/' + d.data.app + '.png'); 
-
-        elements.append("text")
-            .attr("transform", d => {
-                var centroid = arc.centroid(d);
-                var x = centroid[0];
-                var y = centroid[1];
-
-                // Avoid overlapping with icon (From stackoverflow)
-                var distance = 80; 
-                var angle = Math.atan2(y, x);
-                var newX = x + distance * Math.cos(angle);
-                var newY = y + distance * Math.sin(angle);
-                console.log(x,y,newX,newY)
-                return `translate(${newX}, ${newY})`;
+        var rectangles = svg.selectAll()
+            .data(data, function(d) { return d["App name"]; })
+            .enter()
+            .selectAll("rect")
+            .data(function(d) {
+                return times.map(function(time) {
+                    return { app: d["App name"], time: time, value: +d[time] };
+                });
             })
-            .text(d => `${d3.format(".1f")(d.data.percentage)}%`)
-            .style("text-anchor", d => (arc.centroid(d)[0] > 0) ? "start" : "end") // Adjust text anchor based on the position
-            .style("fill", "black")
-            .style("font-weight", "bold");
+            .enter()
+            .append("rect")
+            .attr("x", function(d) { return xScale(d.time); })
+            .attr("y", function(d) { return yScale(d.app); })
+            .attr("width", xScale.bandwidth())
+            .attr("height", yScale.bandwidth())
+            .style("fill", function(d) { return colorScale(d.value); })
+            .attr("stroke", "none");
 
-    }
+        svg.append("g")
+            .attr("class", "x axis")
+            .attr("transform", "translate(0," + height + ")")
+            .call(d3.axisBottom(xScale).tickSize(0))
+            .selectAll("text")
+            .attr("transform", "rotate(-45)")
+            .style("font-weight", "bold")
+            .style("text-anchor", "end");
 
+        svg.append("g")
+            .attr("class", "y axis")
+            .style("font-weight", "bold")
+            .call(d3.axisLeft(yScale));
 
+        percentageSvg = d3.select("#percentage-chart")
+            .append("svg")
+            .attr("width", width)
+            .attr("height", 350)
+            .append("g")
+            .attr("transform", "translate(" + width / 2 + "," + 160 + ")"); // Adjusted translation
 
-    var sliderContainer = d3.select(".chart-container");
-    var slider = sliderContainer.append("input")
-        .attr("id", "slider")
-        .attr("type", "range")
-        .attr("value", "0")
-        .attr("min", "0")
-        .attr("max", times.length - 1)
-        .attr("step", "1")
-        .style("width", width + "px");
+        function updatePercentageChart(selectedTime) {
+            percentageSvg.selectAll("*").remove();
 
-    var selectedTimeElement = d3.select("#selectedTime");
+            var percentages = data.map(function(d) {
+                var totalValue = d3.sum(data.map(function(row) {
+                    return +row[selectedTime];
+                }));
 
-    slider.on("input", function () {
-        var selectedTimeIndex = +this.value;
-        var selectedTime = times[selectedTimeIndex];
+                return {
+                    app: d["App name"],
+                    percentage: (d[selectedTime] / totalValue) * 100
+                };
+            });
 
-        selectedTimeElement.html("Selected time: " + selectedTime);
-        rectangles
-            .attr("stroke", "none")
-            .attr("stroke-width", 1);
-        rectangles
-            .filter(function (d) {
-                return d.time === selectedTime;
-            })
-            .attr("stroke", "green") 
-            .attr("stroke-width", 2);
+            var pie = d3.pie().value(d => d.percentage);
 
-        updatePercentageChart(selectedTime);
-    });
+            var arc = d3.arc()
+                .innerRadius(0)
+                .outerRadius(140);
 
-});
+            var color = d3.scaleOrdinal(d3.schemeCategory10);
 
+            var sortedData = percentages.slice().sort((a, b) => b.percentage - a.percentage);
+            var top6Data = pie(sortedData.slice(0, 6));
+
+            percentageSvg.selectAll("path")
+                .data(top6Data)
+                .enter()
+                .append("path")
+                .attr("d", arc)
+                .attr("fill", (d, i) => color(i));
+
+            // Handle both icon and text
+            var elements = percentageSvg.selectAll(".icon-text-group")
+                .data(top6Data)
+                .enter()
+                .append("g")
+                .attr("class", "icon-text-group");
+
+            elements.append("image")
+                .attr("x", d => arc.centroid(d)[0] - 15) 
+                .attr("y", d => arc.centroid(d)[1] - 15) 
+                .attr("height", 40)
+                .attr("xlink:href", d => 'image/' + d.data.app + '.png'); 
+
+            elements.append("text")
+                .attr("transform", d => {
+                    var centroid = arc.centroid(d);
+                    var x = centroid[0];
+                    var y = centroid[1];
+
+                    // Avoid overlapping with icon (From stackoverflow)
+                    var distance = 280; 
+                    var angle = Math.atan2(y, x);
+                    var newX = x + distance * Math.cos(angle);
+                    var newY = y + distance * Math.sin(angle);
+                    console.log(x,y,newX,newY)
+                    return `translate(${newX}, ${newY})`;
+                })
+                .text(d => `${d3.format(".1f")(d.data.percentage)}%`)
+                .style("text-anchor", d => (arc.centroid(d)[0] > 0) ? "start" : "end") // Adjust text anchor based on the position
+                .style("fill", "black")
+                .style("font-weight", "bold");
+
+        }
+
+        var sliderContainer = d3.select("#chart-container")
+            .append("div") 
+            .style("position", "relative")
+            .style("bottom", "-1010px"); 
+
+        var slider = sliderContainer.append("input")
+            .attr("id", "slider")
+            .attr("type", "range")
+            .attr("value", "0")
+            .attr("min", "0")
+            .attr("max", times.length - 1)
+            .attr("step", "1")
+            .style("width", width + "px")
+            .style("width", "290%")
+            .style("bottom", "100px")  
+            .style("height", "30px");
+
+        var selectedTimeElement = sliderContainer.append("span")  
+            .attr("id", "selectedTime")
+            .style("position", "absolute")
+            .style("bottom", "50px") 
+            .style("margin-left", "10px") 
+            .style("font-weight", "bold");  
+
+            slider.on("input", function () {
+                var selectedTimeIndex = +this.value;
+                var selectedTime = times[selectedTimeIndex];
+
+                selectedTimeElement.html("Selected time: " + selectedTime);
+                rectangles
+                    .attr("stroke", "none")
+                    .attr("stroke-width", 1);
+                rectangles
+                    .filter(function (d) {
+                        return d.time === selectedTime;
+                    })
+                    .attr("stroke", "green") 
+                    .attr("stroke-width", 2);
+
+                updatePercentageChart(selectedTime);
+
+             });
+        });
     
     </script>
     </body>
