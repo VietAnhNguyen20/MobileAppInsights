@@ -30,7 +30,7 @@
       d3.csv("data/radial_bar_chart.csv").then(function(data) {
 
         data.forEach(function(d) {
-          d.totalDuration = +d.duration_weekday + +d.duration_weekend;
+          d.totalDuration = (+d.duration_weekday + +d.duration_weekend) / 60; 
         });
 
         data.sort((a, b) => b.totalDuration - a.totalDuration);
@@ -80,17 +80,17 @@
         bars.append("rect")
           .attr("class", "weekday")
           .attr("x", xScale.bandwidth() * 0.1)
-          .attr("y", d => yScale(+d.duration_weekday))
+          .attr("y", d => yScale(+d.duration_weekday/60))
           .attr("width", xScale.bandwidth() * 0.4)
-          .attr("height", d => height - margin.top - margin.bottom - yScale(+d.duration_weekday))
+          .attr("height", d => height - margin.top - margin.bottom - yScale(+d.duration_weekday/60))
           .attr("fill", "#69b3a2");
 
         bars.append("rect")
           .attr("class", "weekend")
           .attr("x", xScale.bandwidth() * 0.5)
-          .attr("y", d => yScale(+d.duration_weekend))
+          .attr("y", d => yScale(+d.duration_weekend/60))
           .attr("width", xScale.bandwidth() * 0.4)
-          .attr("height", d => height - margin.top - margin.bottom - yScale(+d.duration_weekend))
+          .attr("height", d => height - margin.top - margin.bottom - yScale(+d.duration_weekend/60))
           .attr("fill", "#404080");
 
         svg1.append("text")
@@ -104,7 +104,7 @@
           .attr("x", 0 - (height / 2))
           .attr("dy", "1em")
           .style("text-anchor", "middle")
-          .text("Duration");
+          .text("Duration (hours)");
 
         // Add legend
         const legend = svg1.append("g")
@@ -148,8 +148,8 @@
         let totalWeekend = d3.sum(data, (d) => +d.duration_weekend);
   
         const totalData = [
-          { day_type: "Weekdays", totalDuration: totalWeekday },
-          { day_type: "Weekends", totalDuration: totalWeekend },
+          { day_type: "Weekdays", totalDuration: totalWeekday / 60 }, 
+          { day_type: "Weekends", totalDuration: totalWeekend / 60 }, 
         ];
   
         const width = 400;
@@ -189,7 +189,7 @@
           .append("text")
           .attr("transform", (d) => "translate(" + arc.centroid(d) + ")")
           .attr("text-anchor", "middle")
-          .text((d) => d.data.totalDuration + " minutes");
+          .text((d) => d.data.totalDuration.toFixed(1) + " hours"); 
   
         svg
           .append("text")
@@ -199,15 +199,6 @@
       });
     </script>
   </div>
-  
-  
-  
-  
-  
-  
-  
-  
-  
 </div>
 
 </body>
