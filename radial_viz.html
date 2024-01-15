@@ -27,57 +27,50 @@
 <div class="chart-container">
   <div class="chart1">
     <script>
-      // Load data from CSV file
       d3.csv("data/radial_bar_chart.csv").then(function(data) {
 
-        // Combine weekday and weekend durations for sorting
         data.forEach(function(d) {
           d.totalDuration = +d.duration_weekday + +d.duration_weekend;
         });
 
-        // Sort data based on total duration
         data.sort((a, b) => b.totalDuration - a.totalDuration);
 
-        // Set up the dimensions of the first chart
-        const width = 1000; // Adjusted width to accommodate two charts in the same row
+        const width = 1000; 
         const height = 500;
         const margin = { top: 20, right: 30, bottom: 100, left: 60 };
 
-        // Extract unique applications
+
         const applications = data.map(d => d.grp);
 
-        // Create the SVG element for the first chart
+        // First chart
         const svg1 = d3.select(".chart1").append("svg")
           .attr("width", width)
           .attr("height", height)
           .append("g")
           .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-        // X-axis scale
+        // X-axis
         const xScale = d3.scaleBand()
           .domain(applications)
           .range([0, width - margin.left - margin.right])
           .padding(0.1);
 
-        // Y-axis scale
+        // Y-axis
         const yScale = d3.scaleLinear()
           .domain([0, d3.max(data, d => d.totalDuration)])
           .range([height - margin.top - margin.bottom, 0]);
 
-        // Create X-axis
         svg1.append("g")
           .attr("transform", "translate(0," + (height - margin.top - margin.bottom) + ")")
           .call(d3.axisBottom(xScale).tickSizeOuter(0))
           .selectAll("text")
           .attr("transform", "translate(-10,0)rotate(-45)")
           .style("text-anchor", "end")
-          .style("font-size", "12px"); // Adjust font size to fit rotated labels
+          .style("font-size", "12px");
 
-        // Create Y-axis
         svg1.append("g")
           .call(d3.axisLeft(yScale));
 
-        // Create bars
         const bars = svg1.selectAll("g.bar")
           .data(data)
           .enter().append("g")
@@ -100,13 +93,11 @@
           .attr("height", d => height - margin.top - margin.bottom - yScale(+d.duration_weekend))
           .attr("fill", "#404080");
 
-        // Add X-axis label
         svg1.append("text")
           .attr("transform", "translate(" + (width - margin.left - margin.right) / 2 + "," + (height - margin.top) + ")")
           .style("text-anchor", "middle")
           .text("Applications");
 
-        // Add Y-axis label
         svg1.append("text")
           .attr("transform", "rotate(-90)")
           .attr("y", 0 - margin.left)
@@ -115,7 +106,7 @@
           .style("text-anchor", "middle")
           .text("Duration");
 
-        // Add legend for both charts
+        // Add legend
         const legend = svg1.append("g")
           .attr("class", "legend")
           .attr("transform", "translate(" + (width - margin.right - 200) + "," + (margin.top + 100) + ")");
@@ -152,9 +143,7 @@
 
   <div class="chart2">
     <script>
-      // Load data from CSV file
       d3.csv("data/radial_bar_chart.csv").then(function (data) {
-        // Combine weekday and weekend durations for sorting
         let totalWeekday = d3.sum(data, (d) => +d.duration_weekday);
         let totalWeekend = d3.sum(data, (d) => +d.duration_weekend);
   
@@ -163,13 +152,12 @@
           { day_type: "Weekends", totalDuration: totalWeekend },
         ];
   
-        // Set up the dimensions of the chart
         const width = 400;
         const height = 400;
         const radius = 140;
         const margin = { top: 20, right: 20, bottom: 20, left: 20 };
   
-        // Create the SVG element for the chart
+        // Second chart
         const svg = d3
           .select(".chart2")
           .append("svg")
@@ -178,16 +166,13 @@
           .append("g")
           .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
   
-        // Create a pie chart layout
         const pie = d3.pie().value((d) => d.totalDuration);
   
-        // Create an arc generator
         const arc = d3
           .arc()
           .innerRadius(0)
           .outerRadius(radius);
   
-        // Create arcs for the pie chart
         const arcs = svg
           .selectAll("arc")
           .data(pie(totalData))
@@ -195,24 +180,21 @@
           .append("g")
           .attr("class", "arc");
   
-        // Draw the arcs
         arcs
           .append("path")
           .attr("d", arc)
           .attr("fill", (d) => (d.data.day_type === "Weekends" ? "#404080" : "#69b3a2"));
   
-        // Add text labels
         arcs
           .append("text")
           .attr("transform", (d) => "translate(" + arc.centroid(d) + ")")
           .attr("text-anchor", "middle")
           .text((d) => d.data.totalDuration + " minutes");
   
-        // Add the central text "Total Usage" below the circle
         svg
           .append("text")
           .attr("text-anchor", "middle")
-          .attr("dy", radius + 50) // Adjust the vertical positioning
+          .attr("dy", radius + 50) 
           .text("Total Usage");
       });
     </script>
