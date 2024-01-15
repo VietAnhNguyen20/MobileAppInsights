@@ -86,7 +86,7 @@
 
         #chart {
             width: 100%;
-            height: 500px; 
+            height: 1500px; 
         }
 
         #h1 {
@@ -154,8 +154,8 @@ var node_radius = 5,
     //circle_radius = 300;
 
 var svg = d3.select("#chart").append("svg")
-    .attr("width", width + margin.left + margin.right + 500)
-    .attr("height", height + margin.top + margin.bottom + 500)
+    .attr("width", width + margin.left + margin.right + 150 )
+    .attr("height", height + margin.top + margin.bottom + 150 )
     .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
@@ -522,69 +522,69 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
 
 
     //###############Second and Third Visualisations########################
-    var percentageSvg;
+        var percentageSvg;
 
-    d3.csv("data/static_visualization.csv").then(function(data) {
-        var apps = data.map(d => d["App name"]);
-        var times = Object.keys(data[0]).slice(1);
+        d3.csv("data/static_visualization.csv").then(function(data) {
+            var apps = data.map(d => d["App name"]);
+            var times = Object.keys(data[0]).slice(1);
 
-        var margin = {top: 5, right: 20, bottom: 30, left: 120},
-            width = 1800 - margin.left - margin.right,
-            height = 450 - margin.top - margin.bottom;
+            var margin = {top: 5, right: 20, bottom: 30, left: 120},
+                width = 1800 - margin.left - margin.right,
+                height = 450 - margin.top - margin.bottom;
 
-        var xScale = d3.scaleBand()
-            .domain(times)
-            .range([0, width])
-            .padding(0.1);
+            var xScale = d3.scaleBand()
+                .domain(times)
+                .range([0, width])
+                .padding(0.1);
 
-        var yScale = d3.scaleBand()
-            .domain(apps)
-            .range([height, 0])
-            .padding(0.1);
+            var yScale = d3.scaleBand()
+                .domain(apps)
+                .range([height, 0])
+                .padding(0.1);
 
-        var colorScale = d3.scaleSequential(d3.interpolateReds)
-            .domain([0, d3.max(data, d => d3.max(times, t => +d[t]))]);
+            var colorScale = d3.scaleSequential(d3.interpolateReds)
+                .domain([0, d3.max(data, d => d3.max(times, t => +d[t]))]);
 
-        var svg = d3.select("#chart")
-            .append("svg")
-            .attr("width", width + margin.left + margin.right)
-            .attr("height", height + margin.top + margin.bottom)
-            .append("g")
-            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+            var svg = d3.select("#chart")
+                .append("svg")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
+                .append("g")
+                .attr("transform", "translate(" + margin.left + "," + margin.top   + ")");
 
-        var rectangles = svg.selectAll()
-            .data(data, function(d) { return d["App name"]; })
-            .enter()
-            .selectAll("rect")
-            .data(function(d) {
-                return times.map(function(time) {
-                    return { app: d["App name"], time: time, value: +d[time] };
-                });
-            })
-            .enter()
-            .append("rect")
-            .attr("x", function(d) { return xScale(d.time); })
-            .attr("y", function(d) { return yScale(d.app); })
-            .attr("width", xScale.bandwidth())
-            .attr("height", yScale.bandwidth())
-            .style("fill", function(d) { return colorScale(d.value); })
-            .attr("stroke", "none");
+            var rectangles = svg.selectAll()
+                .data(data, function(d) { return d["App name"]; })
+                .enter()
+                .selectAll("rect")
+                .data(function(d) {
+                    return times.map(function(time) {
+                        return { app: d["App name"], time: time, value: +d[time] };
+                    });
+                })
+                .enter()
+                .append("rect")
+                .attr("x", function(d) { return xScale(d.time); })
+                .attr("y", function(d) { return yScale(d.app); })
+                .attr("width", xScale.bandwidth())
+                .attr("height", yScale.bandwidth())
+                .style("fill", function(d) { return colorScale(d.value); })
+                .attr("stroke", "none");
 
-        svg.append("g")
-            .attr("class", "x axis")
-            .attr("transform", "translate(0," + height + ")")
-            .call(d3.axisBottom(xScale).tickSize(0))
-            .selectAll("text")
-            .attr("transform", "rotate(-45)")
-            .style("font-weight", "bold")
-            .style("text-anchor", "end");
+            svg.append("g")
+                .attr("class", "x axis")
+                .attr("transform", "translate(0," + height + ")")
+                .call(d3.axisBottom(xScale).tickSize(0))
+                .selectAll("text")
+                .attr("transform", "rotate(-45)")
+                .style("font-weight", "bold")
+                .style("text-anchor", "end");
 
-        svg.append("g")
-            .attr("class", "y axis")
-            .style("font-weight", "bold")
-            .call(d3.axisLeft(yScale));
+            svg.append("g")
+                .attr("class", "y axis")
+                .style("font-weight", "bold")
+                .call(d3.axisLeft(yScale));
 
-        percentageSvg = d3.select("#percentage-chart")
+        /*percentageSvg = d3.select("#percentage-chart")
             .append("svg")
             .attr("width", width)
             .attr("height", 350)
@@ -621,7 +621,9 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
                 .enter()
                 .append("path")
                 .attr("d", arc)
-                .attr("fill", (d, i) => color(i));
+                .attr("fill", (d, i) => color(i))
+                .attr("transform", "translate(" + width/2 + "," - 250 + ")"); 
+
 
             // Handle both icon and text
             var elements = percentageSvg.selectAll(".icon-text-group")
@@ -629,6 +631,7 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
                 .enter()
                 .append("g")
                 .attr("class", "icon-text-group");
+
 
             elements.append("image")
                 .attr("x", d => arc.centroid(d)[0] - 15) 
@@ -643,7 +646,7 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
                     var y = centroid[1];
 
                     // Avoid overlapping with icon (From stackoverflow)
-                    var distance = 280; 
+                    var distance = 80; 
                     var angle = Math.atan2(y, x);
                     var newX = x + distance * Math.cos(angle);
                     var newY = y + distance * Math.sin(angle);
@@ -653,14 +656,13 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
                 .text(d => `${d3.format(".1f")(d.data.percentage)}%`)
                 .style("text-anchor", d => (arc.centroid(d)[0] > 0) ? "start" : "end") // Adjust text anchor based on the position
                 .style("fill", "black")
-                .style("font-weight", "bold");
-
-        }
+                // .style("font-weight", "bold");
+        }*/
 
         var sliderContainer = d3.select("#chart-container")
             .append("div") 
             .style("position", "relative")
-            .style("bottom", "-1010px"); 
+            .style("bottom", "100px"); 
 
         var slider = sliderContainer.append("input")
             .attr("id", "slider")
@@ -696,7 +698,7 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
                     .attr("stroke", "green") 
                     .attr("stroke-width", 2);
 
-                updatePercentageChart(selectedTime);
+                //updatePercentageChart(selectedTime);
 
              });
         });
