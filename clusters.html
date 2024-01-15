@@ -577,7 +577,7 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
             .range([height, 0])
             .padding(0.1);
 
-        var colorScale = d3.scaleSequential(d3.interpolateReds)
+        var colorScale = d3.scaleSequential(d3.interpolateBlues)
             .domain([0, d3.max(data, d => d3.max(times, t => +d[t]))]);
 
         var svg = d3.select("#chart")
@@ -666,7 +666,7 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
         svg2.append("path")
             .datum(totalTimes)
             .attr("fill", "none")
-            .attr("stroke", "red")
+            .attr("stroke", "violet")
             .attr("stroke-width", 3)
             .attr("d", line);
             
@@ -709,11 +709,11 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
                     .filter(function (d) {
                         return d.time === selectedTime;
                     })
-                    .attr("stroke", "black") 
+                    .attr("stroke", "red") 
                     .attr("stroke-width", 2);
 
                 bars2
-                    .attr("fill", "steelblue");
+                    .attr("fill", "#add8e6");
                     
                 bars2
                     .filter(function (d) {
