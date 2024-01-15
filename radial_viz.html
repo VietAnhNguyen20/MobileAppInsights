@@ -3,132 +3,230 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bar Chart</title>
+  <title>Bar Charts</title>
   <script src="https://d3js.org/d3.v7.min.js"></script>
+  <style>
+    .chart-container {
+      display: flex;
+    }
+
+    .legend {
+      margin-top: 20px;
+    }
+
+    .legend rect {
+      height: 20px;
+      width: 20px;
+      display: inline-block;
+      margin-right: 5px;
+    }
+  </style>
 </head>
 <body>
 
-<script>
-  // Load data from CSV file
-  d3.csv("data/radial_bar_chart.csv").then(function(data) {
+<div class="chart-container">
+  <div class="chart1">
+    <script>
+      // Load data from CSV file
+      d3.csv("data/radial_bar_chart.csv").then(function(data) {
 
-    // Combine weekday and weekend durations for sorting
-    data.forEach(function(d) {
-      d.totalDuration = +d.duration_weekday + +d.duration_weekend;
-    });
+        // Combine weekday and weekend durations for sorting
+        data.forEach(function(d) {
+          d.totalDuration = +d.duration_weekday + +d.duration_weekend;
+        });
 
-    // Sort data based on total duration
-    data.sort((a, b) => b.totalDuration - a.totalDuration);
+        // Sort data based on total duration
+        data.sort((a, b) => b.totalDuration - a.totalDuration);
 
-    // Set up the dimensions of the chart
-    const width = 800;  // Adjusted width to accommodate rotated labels
-    const height = 450;
-    const margin = { top: 20, right: 150, bottom: 100, left: 50 };
+        // Set up the dimensions of the first chart
+        const width = 1000; // Adjusted width to accommodate two charts in the same row
+        const height = 500;
+        const margin = { top: 20, right: 30, bottom: 100, left: 60 };
 
-    // Extract unique applications
-    const applications = data.map(d => d.grp);
+        // Extract unique applications
+        const applications = data.map(d => d.grp);
 
-    // Create the SVG element
-    const svg = d3.select("body").append("svg")
-      .attr("width", width)
-      .attr("height", height)
-      .append("g")
-      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+        // Create the SVG element for the first chart
+        const svg1 = d3.select(".chart1").append("svg")
+          .attr("width", width)
+          .attr("height", height)
+          .append("g")
+          .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    // X-axis scale
-    const xScale = d3.scaleBand()
-      .domain(applications)
-      .range([0, width - margin.left - margin.right])
-      .padding(0.1);
+        // X-axis scale
+        const xScale = d3.scaleBand()
+          .domain(applications)
+          .range([0, width - margin.left - margin.right])
+          .padding(0.1);
 
-    // Y-axis scale
-    const yScale = d3.scaleLinear()
-      .domain([0, d3.max(data, d => d.totalDuration)])
-      .range([height - margin.top - margin.bottom, 0]);
+        // Y-axis scale
+        const yScale = d3.scaleLinear()
+          .domain([0, d3.max(data, d => d.totalDuration)])
+          .range([height - margin.top - margin.bottom, 0]);
 
-    // Create X-axis
-    svg.append("g")
-      .attr("transform", "translate(0," + (height - margin.top - margin.bottom) + ")")
-      .call(d3.axisBottom(xScale).tickSizeOuter(0))
-      .selectAll("text")
-      .attr("transform", "translate(-10,0)rotate(-45)")
-      .style("text-anchor", "end")
-      .style("font-size", "12px"); // Adjust font size to fit rotated labels
+        // Create X-axis
+        svg1.append("g")
+          .attr("transform", "translate(0," + (height - margin.top - margin.bottom) + ")")
+          .call(d3.axisBottom(xScale).tickSizeOuter(0))
+          .selectAll("text")
+          .attr("transform", "translate(-10,0)rotate(-45)")
+          .style("text-anchor", "end")
+          .style("font-size", "12px"); // Adjust font size to fit rotated labels
 
-    // Create Y-axis
-    svg.append("g")
-      .call(d3.axisLeft(yScale));
+        // Create Y-axis
+        svg1.append("g")
+          .call(d3.axisLeft(yScale));
 
-    // Create bars
-    const bars = svg.selectAll("g.bar")
-      .data(data)
-      .enter().append("g")
-      .attr("class", "bar")
-      .attr("transform", d => "translate(" + xScale(d.grp) + ",0)");
+        // Create bars
+        const bars = svg1.selectAll("g.bar")
+          .data(data)
+          .enter().append("g")
+          .attr("class", "bar")
+          .attr("transform", d => "translate(" + xScale(d.grp) + ",0)");
 
-    bars.append("rect")
-      .attr("class", "weekday")
-      .attr("x", xScale.bandwidth() * 0.1)
-      .attr("y", d => yScale(+d.duration_weekday))
-      .attr("width", xScale.bandwidth() * 0.4)
-      .attr("height", d => height - margin.top - margin.bottom - yScale(+d.duration_weekday))
-      .attr("fill", "#69b3a2");
+        bars.append("rect")
+          .attr("class", "weekday")
+          .attr("x", xScale.bandwidth() * 0.1)
+          .attr("y", d => yScale(+d.duration_weekday))
+          .attr("width", xScale.bandwidth() * 0.4)
+          .attr("height", d => height - margin.top - margin.bottom - yScale(+d.duration_weekday))
+          .attr("fill", "#69b3a2");
 
-    bars.append("rect")
-      .attr("class", "weekend")
-      .attr("x", xScale.bandwidth() * 0.5)
-      .attr("y", d => yScale(+d.duration_weekend))
-      .attr("width", xScale.bandwidth() * 0.4)
-      .attr("height", d => height - margin.top - margin.bottom - yScale(+d.duration_weekend))
-      .attr("fill", "#404080");
+        bars.append("rect")
+          .attr("class", "weekend")
+          .attr("x", xScale.bandwidth() * 0.5)
+          .attr("y", d => yScale(+d.duration_weekend))
+          .attr("width", xScale.bandwidth() * 0.4)
+          .attr("height", d => height - margin.top - margin.bottom - yScale(+d.duration_weekend))
+          .attr("fill", "#404080");
 
-    // Add X-axis label
-    svg.append("text")
-      .attr("transform", "translate(" + (width - margin.left - margin.right) / 2 + "," + (height - margin.top) + ")")
-      .style("text-anchor", "middle")
-      .text("Applications");
+        // Add X-axis label
+        svg1.append("text")
+          .attr("transform", "translate(" + (width - margin.left - margin.right) / 2 + "," + (height - margin.top) + ")")
+          .style("text-anchor", "middle")
+          .text("Applications");
 
-    // Add Y-axis label
-    svg.append("text")
-      .attr("transform", "rotate(-90)")
-      .attr("y", 0 - margin.left)
-      .attr("x", 0 - (height / 2))
-      .attr("dy", "1em")
-      .style("text-anchor", "middle")
-      .text("Duration");
+        // Add Y-axis label
+        svg1.append("text")
+          .attr("transform", "rotate(-90)")
+          .attr("y", 0 - margin.left)
+          .attr("x", 0 - (height / 2))
+          .attr("dy", "1em")
+          .style("text-anchor", "middle")
+          .text("Duration");
 
-    // Add legend
-    const legend = svg.append("g")
-      .attr("transform", "translate(" + (width - margin.right) + "," + margin.top + ")");
+        // Add legend for both charts
+        const legend = svg1.append("g")
+          .attr("class", "legend")
+          .attr("transform", "translate(" + (width - margin.right - 200) + "," + (margin.top + 100) + ")");
 
-    legend.append("rect")
-      .attr("class", "weekday")
-      .attr("x", 0)
-      .attr("y", 0)
-      .attr("width", 20)
-      .attr("height", 20)
-      .attr("fill", "#69b3a2");
+        legend.append("rect")
+          .attr("class", "weekday")
+          .attr("x", 0)
+          .attr("y", 0)
+          .attr("width", 20)
+          .attr("height", 20)
+          .attr("fill", "#69b3a2");
 
-    legend.append("text")
-      .attr("x", 30)
-      .attr("y", 10)
-      .text("Weekday");
+        legend.append("text")
+          .attr("x", 30)
+          .attr("y", 10)
+          .text("Weekday");
 
-    legend.append("rect")
-      .attr("class", "weekend")
-      .attr("x", 0)
-      .attr("y", 30)
-      .attr("width", 20)
-      .attr("height", 20)
-      .attr("fill", "#404080");
+        legend.append("rect")
+          .attr("class", "weekend")
+          .attr("x", 0)
+          .attr("y", 30)
+          .attr("width", 20)
+          .attr("height", 20)
+          .attr("fill", "#404080");
 
-    legend.append("text")
-      .attr("x", 30)
-      .attr("y", 40)
-      .text("Weekend");
+        legend.append("text")
+          .attr("x", 30)
+          .attr("y", 40)
+          .text("Weekend");
 
-  });
-</script>
+      });
+    </script>
+  </div>
+
+  <div class="chart2">
+    <script>
+      // Load data from CSV file
+      d3.csv("data/radial_bar_chart.csv").then(function (data) {
+        // Combine weekday and weekend durations for sorting
+        let totalWeekday = d3.sum(data, (d) => +d.duration_weekday);
+        let totalWeekend = d3.sum(data, (d) => +d.duration_weekend);
+  
+        const totalData = [
+          { day_type: "Weekdays", totalDuration: totalWeekday },
+          { day_type: "Weekends", totalDuration: totalWeekend },
+        ];
+  
+        // Set up the dimensions of the chart
+        const width = 400;
+        const height = 400;
+        const radius = 140;
+        const margin = { top: 20, right: 20, bottom: 20, left: 20 };
+  
+        // Create the SVG element for the chart
+        const svg = d3
+          .select(".chart2")
+          .append("svg")
+          .attr("width", width)
+          .attr("height", height)
+          .append("g")
+          .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+  
+        // Create a pie chart layout
+        const pie = d3.pie().value((d) => d.totalDuration);
+  
+        // Create an arc generator
+        const arc = d3
+          .arc()
+          .innerRadius(0)
+          .outerRadius(radius);
+  
+        // Create arcs for the pie chart
+        const arcs = svg
+          .selectAll("arc")
+          .data(pie(totalData))
+          .enter()
+          .append("g")
+          .attr("class", "arc");
+  
+        // Draw the arcs
+        arcs
+          .append("path")
+          .attr("d", arc)
+          .attr("fill", (d) => (d.data.day_type === "Weekends" ? "#404080" : "#69b3a2"));
+  
+        // Add text labels
+        arcs
+          .append("text")
+          .attr("transform", (d) => "translate(" + arc.centroid(d) + ")")
+          .attr("text-anchor", "middle")
+          .text((d) => d.data.totalDuration + " minutes");
+  
+        // Add the central text "Total Usage" below the circle
+        svg
+          .append("text")
+          .attr("text-anchor", "middle")
+          .attr("dy", radius + 50) // Adjust the vertical positioning
+          .text("Total Usage");
+      });
+    </script>
+  </div>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+</div>
 
 </body>
 </html>
