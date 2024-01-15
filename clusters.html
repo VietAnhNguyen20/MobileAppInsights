@@ -122,6 +122,17 @@
             margin-top: -700px;
         }
 
+        div.tooltip {
+            color: #222;
+            background-color: #fff;
+            padding: 0.5em;
+            text-shadow: #f5f5f5 0 1px 0;
+            border-radius: 2px;
+            opacity: 0.9;
+            position: absolute;
+            pointer-events: none; /* Ensures the tooltip doesn't interfere with mouse events on the chart */
+            }
+
     </style>
 </head>
 
@@ -161,6 +172,11 @@
 <script src="https://d3js.org/d3.v7.min.js"></script>
 
 <script>  
+const tooltip = d3.select("body").append("div")
+    .attr("class", "tooltip")
+    .style("opacity", 0)
+    .style("position", "absolute")
+    .style("pointer-events", "none");
 
 var margin = {top: 16, right: 0, bottom: 0, left: 0},
     width = 1200 - margin.left - margin.right,
@@ -613,7 +629,6 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
                 };
             });
 
-        // Create a new SVG element for the second visualization
         var margin2 = {top: 10, right: 20, bottom: 30, left: 80},
             width2 = 1800 - margin2.left - margin2.right,
             height2 = 150 - margin2.top - margin2.bottom;
@@ -653,7 +668,7 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
             .datum(totalTimes)
             .attr("fill", "none")
             .attr("stroke", "red")
-            .attr("stroke-width", 2)
+            .attr("stroke-width", 4)
             .attr("d", line);
             
 
@@ -771,7 +786,21 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
             .attr("y", d => yScale(+d.duration_weekday/60))
             .attr("width", xScale.bandwidth() * 0.4)
             .attr("height", d => height - margin.top - margin.bottom - yScale(+d.duration_weekday/60))
-            .attr("fill", "#69b3a2");
+            .attr("fill", "#69b3a2")
+            .on("mousemove", function (e, d) {
+                const mousePosition = [e.pageX, e.pageY];
+                tooltip.transition()
+                    .duration(200)
+                    .style("opacity", 1)
+                    .style("left", (mousePosition[0] + margin.left) + "px")
+                    .style("top", (mousePosition[1] + margin.top) + "px");
+                tooltip.html(`${d.grp}: ${d.duration_weekday} minutes`);
+            })
+            .on("mouseout", function() {
+                tooltip.transition()
+                    .duration(500)
+                    .style("opacity", 0);
+            });
 
         bars.append("rect")
             .attr("class", "weekend")
@@ -779,7 +808,21 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
             .attr("y", d => yScale(+d.duration_weekend/60))
             .attr("width", xScale.bandwidth() * 0.4)
             .attr("height", d => height - margin.top - margin.bottom - yScale(+d.duration_weekend/60))
-            .attr("fill", "#404080");
+            .attr("fill", "#404080")
+            .on("mousemove", function (e, d) {
+                const mousePosition = [e.pageX, e.pageY];
+                tooltip.transition()
+                    .duration(200)
+                    .style("opacity", 1)
+                    .style("left", (mousePosition[0] + margin.left) + "px")
+                    .style("top", (mousePosition[1] + margin.top) + "px");
+                tooltip.html(`${d.grp}: ${d.duration_weekend} minutes`);
+            })
+            .on("mouseout", function() {
+                tooltip.transition()
+                    .duration(500)
+                    .style("opacity", 0);
+            });
 
         svg1.append("text")
             .attr("transform", "translate(" + (width - margin.left - margin.right) / 2 + "," + (height - margin.top) + ")")
