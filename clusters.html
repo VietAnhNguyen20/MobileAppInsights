@@ -564,7 +564,7 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
         var times = Object.keys(data[0]).slice(1);
 
         var margin = {top: 5, right: 20, bottom: 30, left: 80},
-            width = 1800 - margin.left - margin.right,
+            width = 1500 - margin.left - margin.right,
             height = 450 - margin.top - margin.bottom;
 
         var xScale = d3.scaleBand()
@@ -629,7 +629,7 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
             });
 
         var margin2 = {top: 10, right: 20, bottom: 30, left: 80},
-            width2 = 1800 - margin2.left - margin2.right,
+            width2 = 1500 - margin2.left - margin2.right,
             height2 = 150 - margin2.top - margin2.bottom;
 
         var xScale2 = d3.scaleBand()
@@ -684,7 +684,7 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
             .attr("min", "0")
             .attr("max", times.length - 1)
             .attr("step", "1")
-            .style("width", "287%")
+            .style("width", "240%")
             .style("bottom", "100px")  
             .style("height", "30px");
         
@@ -713,7 +713,7 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
                     .attr("stroke-width", 2);
 
                 bars2
-                    .attr("fill", "blue");
+                    .attr("fill", "steelblue");
                     
                 bars2
                     .filter(function (d) {
