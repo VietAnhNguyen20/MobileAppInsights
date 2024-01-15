@@ -157,7 +157,7 @@ var moon = svg.append('image')
     .style('display', 'none')
     .attr('width', 30)
     .attr('height', 30)
-    .attr('x', 95) 
+    .attr('x', 100) 
     .attr('y', 140);
     
 //soleil
@@ -166,8 +166,8 @@ var sun = svg.append('image')
     .style('display', 'none')
     .attr('width', 40)
     .attr('height', 40)
-    .attr('x', 55) 
-    .attr('y', 100);
+    .attr('x', 100) 
+    .attr('y', 140);
 
 //nuit
 var night = svg.append('image')
@@ -175,8 +175,8 @@ var night = svg.append('image')
     .style('display', 'none')
     .attr('width', 40)
     .attr('height', 40)
-    .attr('x', 55) 
-    .attr('y', 100); 
+    .attr('x', 100) 
+    .attr('y', 140); 
 
 var days,
     nodes;
@@ -218,15 +218,15 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
     const radius = 330; // rayon du cercle pour les clusters
 
     // Position du cluster central
-    groups["Screen off (locked)"].x = centerX + 50;
-    groups["Screen off (locked)"].y = centerY + 200;
+    groups["Screen off"].x = centerX + 50;
+    groups["Screen off"].y = centerY + 200;
 
     const totalClusters = Object.keys(groups).length - 1; 
     const angleOffset = (2 * Math.PI) / totalClusters;
 
     let index = 0;
     for (const group in groups) {
-        if (group !== "Screen off (locked)") {
+        if (group !== "Screen off") {
             const currentAngle = index * angleOffset;
             groups[group].x = centerX + radius * Math.cos(currentAngle) + 50;
             groups[group].y = centerY + radius * Math.sin(currentAngle) + 140;
