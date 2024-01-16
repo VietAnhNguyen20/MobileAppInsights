@@ -9,70 +9,94 @@
     .chart-container {
       display: flex;
     }
+
+    .line {
+      stroke-width: 2;
+    }
+
+    .line-text {
+      font-size: 14px;
+      fill: #333;
+    }
+
+    div.tooltip {
+      color: #222;
+      background-color: #fff;
+      padding: 0.5em;
+      text-shadow: #f5f5f5 0 1px 0;
+      border-radius: 2px;
+      opacity: 0.9;
+      position: absolute;
+      pointer-events: none;
+    }
   </style>
 </head>
 <body>
 
 <div class="chart-container">
   <svg id="line-chart"></svg>
+  <div class="tooltip"></div>
 </div>
 
 <script>
-  // Load data from CSV file
+
   d3.csv("data/monthly_usage.csv").then(function(data) {
-    // Parse data
+
     data.forEach(function(d) {
       d.month = +d.month;
       d.total_duration = +d.total_duration;
     });
 
-    // Set up the SVG dimensions
     const margin = { top: 50, right: 20, bottom: 50, left: 50 };
-    const width = 600 - margin.left - margin.right;
-    const height = 400 - margin.top - margin.bottom;
+    const width = 1000 - margin.left - margin.right;
+    const height = 600 - margin.top - margin.bottom;
 
-    // Create the SVG element
     const svg = d3.select("#line-chart")
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
       .append("g")
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    // Create scales
     const xScale = d3.scaleLinear().domain([5, 11]).range([0, width]);
     const yScale = d3.scaleLinear().domain([0, d3.max(data, d => d.total_duration)]).range([height, 0]);
 
-    // Create line function
     const line = d3.line()
       .x(d => xScale(d.month))
       .y(d => yScale(d.total_duration));
 
-    // Create color scale for different applications
     const colorScale = d3.scaleOrdinal(d3.schemeCategory10);
 
-    // Group data by 'grp' and create separate lines for each group
     const groupedData = d3.group(data, d => d.grp);
 
-    // Append lines to the SVG with different colors
     groupedData.forEach((group, key) => {
       svg.append("path")
         .data([group])
         .attr("class", "line")
         .attr("d", line)
         .attr("stroke", colorScale(key))
-        .attr("fill", "none");
+        .attr("fill", "none")
+        .on("mousemove", function(event, d) {
+          d3.select(this).classed("highlighted", true);
+
+          d3.select(".tooltip")
+            .html(`<strong>${key}</strong>`)
+            .style("left", (event.pageX + margin.left) + "px")
+            .style("top", (event.pageY + margin.top) + "px")
+            .style("opacity", 1);
+        })
+        .on("mouseout", function() {
+          d3.select(this).classed("highlighted", false);
+          d3.select(".tooltip").style("opacity", 0);
+        });
     });
 
-    // Append x-axis
     svg.append("g")
       .attr("transform", "translate(0," + height + ")")
       .call(d3.axisBottom(xScale));
 
-    // Append y-axis
     svg.append("g")
       .call(d3.axisLeft(yScale));
 
-    // Append title
     svg.append("text")
       .attr("x", width / 2)
       .attr("y", -margin.top / 2)
@@ -80,8 +104,6 @@
       .style("font-size", "16px")
       .text("Monthly Usage by Application");
 
-  }).catch(function(error) {
-    console.error("Error loading the data: ", error);
   });
 </script>
 
