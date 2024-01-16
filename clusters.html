@@ -154,7 +154,7 @@
             <button id="medium" class="btn btn-secondary">NRML</button>
         </div>
 
-        <h1 id="h1">Analyse Temporelle des Habitudes d'Utilisation des Applications Mobiles</h1>
+        <h1 id="h1">Temporal Analysis of Mobile Application Usage Habits and Patterns</h1>
 
         <div id="chart-container">
             <div id="chart"></div>
@@ -760,7 +760,7 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
 
              });
 
-        //pie chart
+        //Third visualization (2 charts)
         d3.csv("data/radial_bar_chart.csv").then(function(data) {
 
             data.forEach(function(d) {
@@ -782,6 +782,16 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
                 .append("g")
                 .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
+            svg1
+                .append("text")
+                .attr("text-anchor", "middle")
+                .attr("x", (width - margin.left - margin.right) / 2 + 100)
+                .attr("y", -margin.top / 2 + 30)
+                .text("Insights: Application Usage Patterns Across Days")
+                .attr("text-anchor", "middle")
+                .style("font-size", "26px")
+                .style("font-weight", "bold");
+
             // X-axis
             const xScale = d3.scaleBand()
                 .domain(applications)
@@ -800,6 +810,7 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
                 .attr("transform", "translate(-10,0)rotate(-45)")
                 .style("text-anchor", "end")
                 .style("font-size", "12px");
+                
 
             svg1.append("g")
                 .call(d3.axisLeft(yScale));
