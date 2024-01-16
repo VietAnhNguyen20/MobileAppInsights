@@ -68,7 +68,7 @@
 
         #fast,
         #medium,
-        #slow {
+        #stop {
             width: 50px;
             height: 30px;
             z-index: 1000;
@@ -82,6 +82,7 @@
             grid-column: span 6;
             position: relative;
             width: 100%; 
+            height: 200%;
             margin: 20px 0;
         }
 
@@ -117,7 +118,7 @@
 
         .chart1 {
             margin-left: -670px;
-            margin-top: 1800px;
+            margin-top: 2100px;
 
         }
 
@@ -149,8 +150,8 @@
 
         <div id="buttons-container">
             <button id="fast" class="btn btn-secondary">FAST</button>
+            <button id="stop" class="btn btn-secondary">STOP</button>
             <button id="medium" class="btn btn-secondary">NRML</button>
-            <button id="slow" class="btn btn-secondary">SLOW</button>
         </div>
 
         <h1 id="h1">Analyse Temporelle des Habitudes d'Utilisation des Applications Mobiles</h1>
@@ -482,12 +483,12 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
     controlSpeed(timeMultiplier);
 
     document.getElementById("fast").addEventListener("click", function() {
-        timeMultiplier = 6;
+        timeMultiplier = 0;
         controlSpeed(timeMultiplier);
     });
 
-    document.getElementById("slow").addEventListener("click", function() {
-        timeMultiplier = 0.2;
+    document.getElementById("stop").addEventListener("click", function() {
+        timeMultiplier = 0.00000000001;
         controlSpeed(timeMultiplier);
     });
 
@@ -558,7 +559,7 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
     }
 
 
-    //###############Second and Third Visualisations########################
+    //Second Visualisations
     d3.csv("data/static_visualization.csv").then(function(data) {
         var apps = data.map(d => d["App name"]);
         var times = Object.keys(data[0]).slice(1);
@@ -582,10 +583,18 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
 
         var svg = d3.select("#chart")
             .append("svg")
-            .attr("width", width + margin.left + margin.right)
-            .attr("height", height + margin.top + margin.bottom)
+            .attr("width", width+ 240 + margin.left + margin.right )
+            .attr("height", height + 400 + margin.top + margin.bottom)
             .append("g")
-            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+            .attr("transform", "translate(" + margin.left + "," + (margin.top + 250)   + ")");
+                
+        svg.append("text")
+            .attr("x", (width + margin.right) / 2)
+            .attr("y", 0 - (margin.top / 2) - 70)
+            .attr("text-anchor", "middle")
+            .style("font-size", "26px")
+            .style("font-weight", "bold")
+            .text("Distribution of Mobile App Usage Throughout the Day");
 
         var rectangles = svg.selectAll()
             .data(data, function(d) { return d["App name"]; })
@@ -644,9 +653,9 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
         var svg2 = d3.select("#chart-container")
             .append("svg")
             .attr("width", width2 + margin2.left + margin2.right)
-            .attr("height", height2 + margin2.top + margin2.bottom)
+            .attr("height", height2 + margin2.top + margin2.bottom + 700)
             .append("g")
-            .attr("transform", "translate(" + margin2.left + "," + margin2.top + ")");
+            .attr("transform", "translate(" + margin2.left + "," + (margin2.top + 200) + ")");//déplacer le premier bar chart
 
         // Draw bar chart
         var bars2 = svg2.selectAll("rect")
@@ -657,6 +666,7 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
             .attr("y", function(d) { return yScale2(d.total); })
             .attr("width", xScale2.bandwidth())
             .attr("height", function(d) { return height2 - yScale2(d.total); });
+
 
         // Draw approximate line
         var line = d3.line()
@@ -674,7 +684,7 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
         var sliderContainer = d3.select("#chart-container")
             .append("div") 
             .style("position", "relative")
-            .style("bottom", "230px")
+            .style("bottom", "700px")
             .style("margin-left", "75px"); 
 
         var slider = sliderContainer.append("input")
@@ -684,8 +694,8 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
             .attr("min", "0")
             .attr("max", times.length - 1)
             .attr("step", "1")
-            .style("width", "240%")
-            .style("bottom", "100px")  
+            .style("width", "237%")
+            .style("bottom", "150px")  
             .style("height", "30px");
         
 
@@ -917,7 +927,15 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
           .attr("text-anchor", "middle")
           .attr("dy", radius + 50) 
           .text("Average daily usage duration of applications");
+
+        svg
+        .append("text")
+        .attr("text-anchor", "middle")
+        .attr("dy", radius - 350) 
+        .attr("dx", radius) 
+        .text("Titre de votre visualisation");
       });
+
         });
 
         
