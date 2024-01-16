@@ -171,11 +171,10 @@
 <script src="https://d3js.org/d3.v7.min.js"></script>
 
 <script>  
-const tooltip = d3.select("body").append("div")
+var tooltip = d3.select("body")
+    .append("div")
     .attr("class", "tooltip")
-    .style("opacity", 0)
-    .style("position", "absolute")
-    .style("pointer-events", "none");
+    .style("opacity", 0);
 
 var margin = {top: 16, right: 0, bottom: 0, left: 0},
     width = 1200 - margin.left - margin.right,
@@ -603,7 +602,20 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
             .attr("width", xScale.bandwidth())
             .attr("height", yScale.bandwidth())
             .style("fill", function(d) { return colorScale(d.value); })
-            .attr("stroke", "none");
+            .on("mousemove", function (e, d) {
+                const mousePosition = [e.pageX, e.pageY];
+                tooltip.transition()
+                    .duration(200)
+                    .style("opacity", 1)
+                    .style("left", (mousePosition[0] + margin.left) + "px")
+                    .style("top", (mousePosition[1] + margin.top) + "px");
+                tooltip.html(`${d.app}: ${d.value} times`);
+            })
+            .on("mouseout", function() {
+                tooltip.transition()
+                    .duration(500)
+                    .style("opacity", 0)
+            });
 
         svg.append("g")
             .attr("class", "x axis")
@@ -656,7 +668,21 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
             .attr("x", function(d) { return xScale2(d.time); })
             .attr("y", function(d) { return yScale2(d.total); })
             .attr("width", xScale2.bandwidth())
-            .attr("height", function(d) { return height2 - yScale2(d.total); });
+            .attr("height", function(d) { return height2 - yScale2(d.total); })
+            .on("mousemove", function (e, d) {
+                const mousePosition = [e.pageX, e.pageY];
+                tooltip.transition()
+                    .duration(200)
+                    .style("opacity", 1)
+                    .style("left", (mousePosition[0] + margin.left) + "px")
+                    .style("top", (mousePosition[1] + margin.top) + "px");
+                tooltip.html(`${d.time}: ${d.total} times`);
+            })
+            .on("mouseout", function() {
+                tooltip.transition()
+                    .duration(500)
+                    .style("opacity", 0)
+            });
 
         // Draw approximate line
         var line = d3.line()
