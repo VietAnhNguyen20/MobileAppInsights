@@ -864,9 +864,10 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
 
             });
 
-            d3.csv("data/radial_bar_chart.csv").then(function (data) {
+        d3.csv("data/radial_bar_chart.csv").then(function (data) {
             let totalWeekday = d3.sum(data, (d) => +d.duration_weekday);
             let totalWeekend = d3.sum(data, (d) => +d.duration_weekend);
+            const total_cal_percentage = (totalWeekday + totalWeekend)/60
     
             const totalData = [
             { day_type: "Weekdays", totalDuration: totalWeekday / 60 }, 
@@ -891,7 +892,7 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
   
         const arc = d3
           .arc()
-          .innerRadius(0)
+          .innerRadius(0.6*radius)
           .outerRadius(radius);
   
         const arcs = svg
@@ -906,11 +907,30 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
           .attr("d", arc)
           .attr("fill", (d) => (d.data.day_type === "Weekends" ? "#404080" : "#69b3a2"));
   
-        arcs
-          .append("text")
-          .attr("transform", (d) => "translate(" + arc.centroid(d) + ")")
-          .attr("text-anchor", "middle")
-          .text((d) => d.data.totalDuration.toFixed(1) + " hours"); 
+        arcs.append("text")
+            .attr("transform", function(d) {
+                const pos = arc.centroid(d);
+                pos[0] = pos[0] * 1.5; 
+                pos[1] = pos[1] * 1.5;
+                return "translate(" + pos + ")";
+            })
+            .attr("text-anchor", "middle")
+            .text((d) => d.data.totalDuration.toFixed(1) + "h")
+            .on("mousemove", function (e, d) {
+                const mousePosition = [e.pageX, e.pageY];
+                tooltip.transition()
+                    .duration(200)
+                    .style("opacity", 1)
+                    .style("left", (mousePosition[0] + margin.left) + "px")
+                    .style("top", (mousePosition[1] + margin.top) + "px");
+                tooltip.html(`${d.data.day_type}: ${(d.data.totalDuration / total_cal_percentage * 100).toFixed(1)} %`);
+            })
+            .on("mouseout", function() {
+                tooltip.transition()
+                    .duration(500)
+                    .style("opacity", 0);
+            });
+
   
         svg
           .append("text")
