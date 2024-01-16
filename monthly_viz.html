@@ -39,9 +39,7 @@
 </div>
 
 <script>
-
   d3.csv("data/monthly_usage.csv").then(function(data) {
-
     data.forEach(function(d) {
       d.month = +d.month;
       d.total_duration = +d.total_duration;
@@ -76,17 +74,24 @@
         .attr("stroke", colorScale(key))
         .attr("fill", "none")
         .on("mousemove", function(event, d) {
-          d3.select(this).classed("highlighted", true);
+            d3.select(this).classed("highlighted", true);
 
-          d3.select(".tooltip")
+            svg.selectAll(".line:not(.highlighted)")
+                .attr("opacity", 0.3);
+
+            d3.select(".tooltip")
             .html(`<strong>${key}</strong>`)
             .style("left", (event.pageX + margin.left) + "px")
             .style("top", (event.pageY + margin.top) + "px")
             .style("opacity", 1);
         })
         .on("mouseout", function() {
-          d3.select(this).classed("highlighted", false);
-          d3.select(".tooltip").style("opacity", 0);
+            d3.select(this).classed("highlighted", false);
+
+            svg.selectAll(".line")
+                .attr("opacity", 1);
+
+            d3.select(".tooltip").style("opacity", 0);
         });
     });
 
