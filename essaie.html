@@ -1,9 +1,1147 @@
+<!DOCTYPE html>
+<head>
+    <title>Moving Bubble Tutorial</title>
+    <meta charset="utf-8">
 
-<div id="chart-container">
-  <div id="chart"></div>
-  <div class="percentage-chart-container" id="percentage-chart"></div>
-</div>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+
+    <style>
+
+        .container {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 20px;
+        }
+
+        #watch-container {
+            position: relative;
+            top: 240px;
+            right: -65%;
+            width: 150px;
+            height: 80px;
+            border: 3px solid #333;
+            background-color: #f1f1f1;
+            border-radius: 10px;
+            margin: 20px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #watch-face {
+            width: 130px;
+            height: 70px;
+            top: 0px;
+            background-color: #ffffff;
+            border-radius: 7px;
+            position: relative;
+        }
+
+        #timecount {
+            font-family: 'Roboto', sans-serif;
+            font-size: 24px;
+            font-weight: bold;
+            position: absolute;
+            top: 35px;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            align-items: center;
+        }
+
+        #timecount .hours,
+        #timecount .minutes,
+        #timecount .ampm {
+            padding: 0 5px;
+            display: inline-block;
+        }
+
+        #buttons-container {
+            grid-column: span 3;
+            display: flex;
+            justify-content: flex-start; 
+            position: relative;
+            top: 500px;
+            left: -134px;
+        }
+
+        #fast,
+        #medium,
+        #stop {
+            width: 50px;
+            height: 30px;
+            z-index: 1000;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: -425px;
+        }
+
+        #fast{
+          margin-left: 125px;
+
+        }
+
+        #chart-container {
+            grid-column: span 6;
+            position: relative;
+            width: 100%; 
+            height: 200%;
+            margin: 20px 0;
+            margin-left: -500px;
+
+        }
+
+        #chart {
+            width: 100%;
+            height: 1500px; 
+        }
+
+        #h1 {
+            grid-column: span 12;
+            font-size: 25px;
+            text-align: center;
+            margin-right: -205px;
+            margin-top: 75px;
+            font-weight: bold;
+        }
+
+        /*Troisième vis*/
+        .chart-container1 {
+            grid-column: span 6;
+            position: relative;
+            width: 300%; 
+            margin: 20px 0;
+            margin-left: 540px;
+            margin-top: -2300px;
+        }
+
+        .legend {
+            margin-top: 20px;
+        }
+
+        .legend rect {
+            height: 20px;
+            width: 20px;
+            display: inline-block;
+            margin-right: 5px;
+        }
+
+        .chart1 {
+            margin-left: -670px;
+            margin-top: 2100px;
+
+        }
+
+        div.tooltip {
+            color: #222;
+            background-color: #fff;
+            padding: 0.5em;
+            text-shadow: #f5f5f5 0 1px 0;
+            border-radius: 2px;
+            opacity: 0.9;
+            position: absolute;
+            pointer-events: none; 
+            }
+
+            .chart-container3 {
+                grid-column: span 6;
+                position: relative;
+                width: 700%; 
+                margin: 100px 0;
+                margin-left: -810px;
+                margin-top: 750px;        
+                }
+
+                .line {
+                stroke-width: 7;
+                }
+
+                .line-text {
+                font-size: 14px;
+                fill: #333;
+                }
+
+                div.tooltip {
+                color: #222;
+                background-color: #fff;
+                padding: 0.5em;
+                text-shadow: #f5f5f5 0 1px 0;
+                border-radius: 2px;
+                opacity: 0.9;
+                position: absolute;
+                pointer-events: none;
+                }
+
+
+    </style>
+</head>
+
+<body>
+    <div class="container">
+      <h1 id="h1">Temporal Analysis of Mobile Application Usage Habits and Patterns</h1>
+        <div id="watch-container">
+            <div id="watch-face">
+                <div id="timecount">
+                    <span class="hours">0</span>:
+                    <span class="minutes">0</span>
+                    <span class="ampm">am</span>
+                </div>
+                
+            <div id="buttons-container">
+                <button id="fast" class="btn btn-secondary">FAST</button>
+                <button id="stop" class="btn btn-secondary">STOP</button>
+                <button id="medium" class="btn btn-secondary">NRML</button>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="chart-container">
+      <div id="chart"></div>
+    </div>
+    
+    <div class="chart-container1">
+      <div class="chart1"> </div>
+  </div>
+
+  <div class="chart-container3">
+      <svg id="line-chart"></svg>
+      <div class="tooltip"></div>
+  </div>
+
+
+
+
+<script src="https://d3js.org/d3.v7.min.js"></script>
+
+<script>  
+var tooltip = d3.select("body")
+    .append("div")
+    .attr("class", "tooltip")
+    .style("opacity", 0);
+
+var margin = {top: 16, right: 0, bottom: 0, left: 0},
+    width = 1200 - margin.left - margin.right,
+    height = 700 - margin.top - margin.bottom;
+
+const timeCounter = d3.select("#timecount");
+const hoursSpan = timeCounter.select('.hours');
+const minutesSpan = timeCounter.select('.minutes');
+    
+var node_radius = 5,
+    padding = 5,
+    cluster_padding = 30;
+    //circle_radius = 300;
+
+var svg = d3.select("#chart").append("svg")
+    .attr("width", width + margin.left + margin.right + 550 )
+    .attr("height", height + margin.top + margin.bottom + 200 )
+    .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+//lune
+var moon = svg.append('image')
+    .attr('href', 'image/lune.png') 
+    .style('display', 'none')
+    .attr('width', 30)
+    .attr('height', 30)
+    .attr('x', 490) 
+    .attr('y', 160);
+    
+//soleil
+var sun = svg.append('image')
+    .attr('href', 'image/soleil.png') 
+    .style('display', 'none')
+    .attr('width', 40)
+    .attr('height', 40)
+    .attr('x', 480) 
+    .attr('y', 160);
+
+//nuit
+var night = svg.append('image')
+    .attr('href', 'image/nuit.jpg') 
+    .style('display', 'none')
+    .attr('width', 40)
+    .attr('height', 40)
+    .attr('x', 480) 
+    .attr('y', 160); 
+
+var days,
+    nodes;
+var groups = {};
+
+
+d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
+    var uniqueGroups = Array.from(new Set(data.map(d => d.grp)));
+    var colorScale =  d3.scaleOrdinal()
+    .range([
+        '#FFC0CB', 
+        '#8A2BE2',
+        '#87CEEB', 
+        '#FFA07A', 
+        '#20B2AA',
+        '#FF6347', 
+        '#00FFFF', 
+        '#FFD700', 
+        '#32CD32', 
+        '#E9967A', 
+        '#9370DB', 
+        '#48D1CC', 
+        '#FF1493', 
+        '#00FF7F'  
+    ]); 
+
+    uniqueGroups.forEach(function(group, index) {
+        groups[group] = {
+            color: colorScale(index),
+            cnt: 0,
+            fullname: group,
+            x: 0, // I will change x, y later
+            y: 0
+        };
+    });
+
+    const centerX = width / 2;
+    const centerY = height / 2;
+    const radius = 400; // rayon du cercle pour les clusters
+
+    // Position du cluster central
+    groups["Screen off"].x = centerX + 490;
+    groups["Screen off"].y = centerY + 300;
+
+    const totalClusters = Object.keys(groups).length - 1; 
+    const angleOffset = (2 * Math.PI) / totalClusters;
+
+    let index = 0;
+    for (const group in groups) {
+        if (group !== "Screen off") {
+            const currentAngle = index * angleOffset;
+            groups[group].x = centerX + radius * Math.cos(currentAngle) + 500;
+            groups[group].y = centerY + radius * Math.sin(currentAngle) + 200;
+            index++;
+        }
+    }
+
+    const images = svg.selectAll('.appImage')
+        .data(Object.keys(groups))
+        .join('image')
+        .attr('class', 'appImage')
+        .attr('xlink:href', d => `image/${d}.png`) //nom d'icone correspondant
+        .attr('width', 40)
+        .attr('height', 40)
+        .attr('x', d => groups[d].x - 20)
+        .attr('y', d => groups[d].y - 130);
+
+
+    console.log("---------GROUPS----------");
+    console.log(groups)
+    console.log("-------------------");
+
+    days = {};
+    // Gather all the same pids
+    data.forEach(d => {
+        if (Object.keys(days).includes(d.pid + "")) {
+            days[d.pid + ""].push(d);
+        } else {
+            days[d.pid + ""] = [d];
+        }
+    });
+    
+    console.log("----------DAYS---------");
+    console.log(days);
+    console.log("-------------------");
+
+
+    nodes = Object.keys(days).map(function(d) {
+        console.log(days[d][0].duration)
+
+        groups[days[d][0].grp].cnt += 1;
+        return {
+            id: "node"+d,
+            x: groups[days[d][0].grp].x + Math.random(),
+            y: groups[days[d][0].grp].y + Math.random(),
+            r: node_radius,
+            color: groups[days[d][0].grp].color,
+            group: days[d][0].grp,
+            timeleft: days[d][0].duration,
+            istage: 0,
+            stages: days[d]
+        }
+        });
+
+    console.log("-------------------");
+    console.log(nodes);
+    console.log("-------------------");
+
+
+    // Variables
+    let time_so_far = 0;
+
+    // Circle for each node
+    const circle = svg.selectAll("circle")
+        .data(nodes)
+        .join("circle")
+        .attr("cx", d => d.x)
+        .attr("cy", d => d.y)
+        .attr("fill", d => d.color);
+
+    // Ease in the circles
+    circle.transition()
+        .delay((d, i) => i * 5)
+        .duration(800)
+        .attrTween("r", d => {
+            const i = d3.interpolate(0, d.r );
+            return t => d.r = i(t);
+        });
+
+    // Group name labels
+    const groupLabels = svg.selectAll('.grp')
+        .data(Object.keys(groups))
+        .join("text")
+        .attr("class", "grp")
+        .attr("text-anchor", "middle")
+        .attr("x", d => groups[d].x )
+        .attr("y", d => groups[d].y - 70)
+        .text(d => groups[d].fullname);
+
+    // Group counts.
+    const groupCounts = svg.selectAll('.grpcnt')
+        .data(Object.keys(groups))
+        .join("text")
+        .attr("class", "grpcnt")
+        .attr("text-anchor", "middle")
+        .attr("x", d => groups[d].x)
+        .attr("y", d => groups[d].y - 50)
+        .text(d => groups[d].cnt);
+
+    // Forces.
+    const simulation = d3.forceSimulation(nodes)
+        .force("x", d => d3.forceX(d.x))
+        .force("y", d => d3.forceY(d.y))
+        .force("cluster", forceCluster())
+        .force("collide", forceCollide())
+        .alpha(.09)
+        .alphaDecay(0);
+
+    simulation.on("tick", () => {
+    const centerX = width / 2;
+    const centerY = height / 2;
+    const scaleFactor = 1.3;
+
+    circle.attr("fill", d => groups[d.group].color);
+
+    // Déplace les bulles du cluster Screen off au-dessus des autres clusters
+    circle.filter(d => d.group === "Screen off")
+        .attr("cx", d => centerX + 110 + (d.x - centerX) / scaleFactor)
+        .attr("cy", d => centerY - 110 + (d.y - centerY) / scaleFactor);
+
+    // Pour les autres clusters, garde la position inchangée
+    circle.filter(d => d.group !== "Screen off")
+        .attr("cx", d => centerX + 110 + (d.x - centerX) / scaleFactor)
+        .attr("cy", d => centerY - 50 + (d.y - centerY) / scaleFactor);
+});
+
+
+
+    let intervalID = null;
+    let timeMultiplier = 1;
+
+//fonctions
+    function timer() {
+        nodes.forEach(function (o) {
+            o.timeleft -= 1;
+            if (o.timeleft === 0 && o.istage < o.stages.length - 1) {
+                groups[o.group].cnt -= 1;
+                o.istage += 1;
+                o.group = o.stages[o.istage].grp;
+                o.timeleft = o.stages[o.istage].duration;
+                groups[o.group].cnt += 1;
+            }
+        });
+        time_so_far += 1;
+        let hours = Math.floor(time_so_far / 60);
+        let minutes = Math.floor(time_so_far % 60);
+        let amPm = 'am';
+        
+        if (hours === 23 && minutes === 59) {
+            time_so_far = 0;
+            hours = 0;
+            minutes = 0;
+        }
+
+        if (hours >= 12) {
+            amPm = 'pm'; 
+        }
+
+        if (hours < 12) {
+            amPm = 'am'; 
+        }
+
+        document.querySelector('.ampm').textContent = amPm;
+
+        if (hours >= 6 && hours < 17) {
+            moon.style('display', 'none');
+            sun.style('display', 'block');
+            night.style('display', 'none');
+        } else if (hours >= 17) {
+            moon.style('display', 'none');
+            sun.style('display', 'none');
+            night.style('display', 'block');
+
+         } else{
+            moon.style('display', 'block');
+            sun.style('display', 'none');
+            night.style('display', 'none');
+        }       
+        
+        hoursSpan.text(hours);
+        minutesSpan.text(minutes);
+        groupCounts.text(d => groups[d].cnt);
+    }
+
+    function controlSpeed(speedMultiplier) {
+        if (intervalID) {
+            clearInterval(intervalID);
+        }
+
+        intervalID = setInterval(() => {
+            timer();
+        }, 1000 / speedMultiplier);
+    }
+
+    controlSpeed(timeMultiplier);
+
+    document.getElementById("fast").addEventListener("click", function() {
+        timeMultiplier = 0;
+        controlSpeed(timeMultiplier);
+    });
+
+    document.getElementById("stop").addEventListener("click", function() {
+        timeMultiplier = 0.00000000001;
+        controlSpeed(timeMultiplier);
+    });
+
+    document.getElementById("medium").addEventListener("click", function() {
+        timeMultiplier = 1;
+        controlSpeed(timeMultiplier);
+    });
+
+            
+        
+    });  
+
+    function forceCluster() {
+        const strength = .15;
+        let nodes;
+
+        function force(alpha) {
+            const l = alpha * strength;
+            for (const d of nodes) {
+            d.vx -= (d.x - groups[d.group].x) * l;
+            d.vy -= (d.y - groups[d.group].y) * l;
+            }
+        }
+        force.initialize = _ => nodes = _;
+
+        return force;
+        }
+
+    function forceCollide() {
+        const alpha = 0.2; // Fixed for greater rigidity
+        const padding1 = padding; // Separation between same-color nodes
+        const padding2 = cluster_padding; // Separation between different-color nodes
+        let nodes;
+        let maxRadius;
+
+        function force() {
+            const quadtree = d3.quadtree(nodes, d => d.x, d => d.y);
+
+            for (const d of nodes) {
+                const r = d.r + maxRadius;
+                const nx1 = d.x - r, ny1 = d.y - r;
+                const nx2 = d.x + r, ny2 = d.y + r;
+
+                quadtree.visit((q, x1, y1, x2, y2) => {
+                    if (!q.length) {
+                        do {
+                            if (q.data !== d) {
+                                const r = d.r + q.data.r + (d.group === q.data.group ? padding1 : padding2);
+                                let x = d.x - q.data.x, y = d.y - q.data.y, l = Math.hypot(x, y);
+
+                                if (l < r) {
+                                    l = (l - r) / l * alpha;
+                                    d.x -= x *= l, d.y -= y *= l;
+                                    q.data.x += x, q.data.y += y;
+                                }
+                            }
+                        } while (q = q.next);
+
+                        return x1 > nx2 || x2 < nx1 || y1 > ny2 || y2 < ny1;
+                    }
+                });
+            }
+        }
+
+        force.initialize = _ => maxRadius = d3.max(nodes = _, d => d.r) + Math.max(padding1, padding2);
+
+        return force;
+    }
+
+
+    //Second Visualisations (matrix)
+    d3.csv("data/static_visualization.csv").then(function(data) {
+        var apps = data.map(d => d["App name"]);
+        var times = Object.keys(data[0]).slice(1);
+
+        var margin = {top: 5, right: 20, bottom: 30, left: 80},
+            width = 1800 - margin.left - margin.right,
+            height = 550 - margin.top - margin.bottom;
+
+        var xScale = d3.scaleBand()
+            .domain(times)
+            .range([0, width])
+            .padding(0.1);
+
+        var yScale = d3.scaleBand()
+            .domain(apps)
+            .range([height, 0])
+            .padding(0.1);
+
+        var colorScale = d3.scaleSequential(d3.interpolateBlues)
+            .domain([0, d3.max(data, d => d3.max(times, t => +d[t]))]);
+
+        var svg = d3.select("#chart")
+            .append("svg")
+            .attr("width", width + 240 + margin.left + margin.right )
+            .attr("height", height + 400 + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform", "translate(" + (margin.left+ 170) + "," + (margin.top + 250)   + ")"); //position matrice
+                
+        svg.append("text")
+            .attr("x", (width + margin.right) / 2)
+            .attr("y", 0 - (margin.top / 2) - 70)
+            .attr("text-anchor", "middle")
+            .style("font-size", "26px")
+            .style("font-weight", "bold")
+            .text("Distribution of Mobile App Usage Throughout the Day");
+
+        var rectangles = svg.selectAll()
+            .data(data, function(d) { return d["App name"]; })
+            .enter()
+            .selectAll("rect")
+            .data(function(d) {
+                return times.map(function(time) {
+                    return { app: d["App name"], time: time, value: +d[time] };
+                });
+            })
+            .enter()
+            .append("rect")
+            .attr("x", function(d) { return xScale(d.time); })
+            .attr("y", function(d) { return yScale(d.app); })
+            .attr("width", xScale.bandwidth())
+            .attr("height", yScale.bandwidth())
+            .style("fill", function(d) { return colorScale(d.value); })
+            .on("mousemove", function (e, d) {
+                const mousePosition = [e.pageX, e.pageY];
+                tooltip.transition()
+                    .duration(200)
+                    .style("opacity", 1)
+                    .style("left", (mousePosition[0] + margin.left) + "px")
+                    .style("top", (mousePosition[1] + margin.top) + "px");
+                tooltip.html(`${d.app}: ${d.value} times`);
+            })
+            .on("mouseout", function() {
+                tooltip.transition()
+                    .duration(500)
+                    .style("opacity", 0)
+            });
+
+        svg.append("g")
+            .attr("class", "x axis")
+            .attr("transform", "translate(0," + height + ")")
+            .call(d3.axisBottom(xScale).tickSize(0))
+            .selectAll("text")
+            .attr("transform", "rotate(-45)")
+            .style("font-weight", "bold")
+            .style("text-anchor", "end")
+            .style("font-size", "14px"); 
+
+        svg.append("g")
+            .attr("class", "y axis")
+            .style("font-weight", "bold")
+            .call(d3.axisLeft(yScale))
+            .style("font-size", "14px"); ;
+
+        var totalTimes = times.map(function(time) {
+                return {
+                    time: time,
+                    total: d3.sum(data, function(d) {
+                        return +d[time];
+                    })
+                };
+            });
+
+        var margin2 = {top: 10, right: 20, bottom: 30, left: 80},
+            width2 = 1500 - margin2.left - margin2.right,
+            height2 = 150 - margin2.top - margin2.bottom;
+        
+        var width2 = 1700;
+        var xScale2 = d3.scaleBand()
+            .domain(times)
+            .range([0, width2])
+            .padding(0.1);
+
+        var yScale2 = d3.scaleLinear()
+            .domain([0, d3.max(totalTimes, d => d.total)])
+            .range([height2, 0]);
+
+        var svg2 = d3.select("#chart-container")
+            .append("svg")
+            .attr("width", width2 + margin2.left + 500 + margin2.right)
+            .attr("height", height2 + margin2.top + margin2.bottom + 700)
+            .append("g")
+            .attr("transform", "translate(" + margin2.left + "," + (margin2.top + 200) + ")");//déplacer le premier bar chart
+
+        // Draw bar chart
+        var bars2 = svg2.selectAll("rect")
+            .data(totalTimes)
+            .enter()
+            .append("rect")
+            .attr("x", function(d) { return xScale2(d.time) + 170; })
+            .attr("y", function(d) { return yScale2(d.total) + 110; })
+            .attr("width", xScale2.bandwidth())
+            .attr("height", function(d) { return height2 - yScale2(d.total); })
+            .on("mousemove", function (e, d) {
+                const mousePosition = [e.pageX, e.pageY];
+                tooltip.transition()
+                    .duration(200)
+                    .style("opacity", 1)
+                    .style("left", (mousePosition[0] + margin.left) + "px")
+                    .style("top", (mousePosition[1] + margin.top) + "px");
+                tooltip.html(`${d.time}: ${d.total} times`);
+            })
+            .on("mouseout", function() {
+                tooltip.transition()
+                    .duration(500)
+                    .style("opacity", 0)
+            });
+
+
+        // Draw approximate line
+        var line = d3.line()
+            .x(function(d) { return xScale2(d.time) + (xScale2.bandwidth() / 2) + 170; })
+            .y(function(d) { return yScale2(d.total) + 110; });
+
+        svg2.append("path")
+            .datum(totalTimes)
+            .attr("fill", "none")
+            .attr("stroke", "violet")
+            .attr("stroke-width", 3)
+            .attr("d", line);
+            
+
+        var sliderContainer = d3.select("#chart-container")
+            .append("div") 
+            .style("position", "relative")
+            .style("bottom", "600px")
+            .style("margin-left", "240px"); 
+
+        var slider = sliderContainer.append("input")
+            .attr("id", "slider")
+            .attr("type", "range")
+            .attr("value", "0")
+            .attr("min", "0")
+            .attr("max", times.length - 1)
+            .attr("step", "1")
+            .style("width", "470%")
+            .style("bottom", "150px")  
+            .style("height", "60px");    
+
+        // rectangles rouges du slider
+        var selectedTimeElement = sliderContainer.append("span")  
+            .attr("id", "selectedTime")
+            .style("position", "absolute")
+            .style("bottom", "50px") 
+            .style("margin-left", "10px") 
+            .style("font-weight", "bold");  
+
+            slider.on("input", function () {
+                var selectedTimeIndex = + this.value;
+                var selectedTime = times[selectedTimeIndex];
+
+                selectedTimeElement.html("Selected time: " + selectedTime);
+                rectangles
+                    .attr("stroke", "none")
+                    .attr("stroke-width", 1);
+
+                svg.select(".bounding-rect").remove();
+
+                var selectedRectangles = rectangles.filter(function (d) {
+                    return d.time === selectedTime;
+                });
+
+                if (!selectedRectangles.empty()) {
+                    var minY = d3.min(selectedRectangles.data(), function(d) { return yScale(d.app); });
+                    var maxY = d3.max(selectedRectangles.data(), function(d) { return yScale(d.app) + yScale.bandwidth(); });
+                    var boundingRect = svg.append("rect")
+                        .attr("class", "bounding-rect")
+                        .attr("x", d3.min(selectedRectangles.data(), function(d) { return xScale(d.time); }))
+                        .attr("y", minY)
+                        .attr("width", xScale.bandwidth())
+                        .attr("height", maxY - minY)
+                        .attr("stroke", "red")
+                        .attr("stroke-width", 2)
+                        .attr("stroke-width", 4) 
+                        .attr("fill", "none"); 
+                }
+
+                bars2
+                    .attr("fill", "#add8e6");
+                    
+                bars2
+                    .filter(function (d) {
+                        return d.time === selectedTime;
+                    })
+                    .attr("fill", "red");
+
+
+             });
+
+        //Third visualization (Pie chart et bar chart)
+        d3.csv("data/radial_bar_chart.csv").then(function(data) {
+
+            data.forEach(function(d) {
+                d.totalDuration = (+d.duration_weekday + +d.duration_weekend) / 60; 
+            });
+
+            data.sort((a, b) => b.totalDuration - a.totalDuration);
+
+            const width = 1380; 
+            const height = 700;
+            const margin = { top: 20, right: 30, bottom: 100, left: 60 };
+
+            const applications = data.map(d => d.grp);
+
+            // First chart
+            const svg1 = d3.select(".chart1").append("svg")
+                .attr("width", width)
+                .attr("height", height + 200)
+                .append("g")
+                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+            svg1
+                .append("text")
+                .attr("text-anchor", "middle")
+                .attr("x", (width - margin.left - margin.right) / 2 + 100)
+                .attr("y", -margin.top / 2 + 10 )
+                .text("Application Usage Patterns Across Weekends and Weekdays")
+                .attr("text-anchor", "middle")
+                .style("font-size", "26px")
+                .style("font-weight", "bold");
+
+            // X-axis
+            const xScale = d3.scaleBand()
+                .domain(applications)
+                .range([0, width - margin.left - margin.right])
+                .padding(0.1);
+
+            // Y-axis
+            const yScale = d3.scaleLinear()
+                .domain([0, d3.max(data, d => d.totalDuration)])
+                .range([height - margin.top - margin.bottom, 0]);
+
+            svg1.append("g")
+                .attr("transform", "translate(0," + (height - margin.top - margin.bottom) + ")")
+                .call(d3.axisBottom(xScale).tickSizeOuter(0))
+                .selectAll("text")
+                .attr("transform", "translate(-10,0)rotate(-45)")
+                .style("text-anchor", "end")
+                .style("font-size", "16px");                
+
+            svg1.append("g")
+                .style("font-size", "16px")
+                .call(d3.axisLeft(yScale));
+
+            const bars = svg1.selectAll("g.bar")
+                .data(data)
+                .enter().append("g")
+                .attr("class", "bar")
+                .attr("transform", d => "translate(" + xScale(d.grp) + ",0)");
+
+        bars.append("rect")
+            .attr("class", "weekday")
+            .attr("x", xScale.bandwidth() * 0.1)
+            .attr("y", d => yScale(+d.duration_weekday/60))
+            .attr("width", xScale.bandwidth() * 0.4)
+            .attr("height", d => height - margin.top - margin.bottom - yScale(+d.duration_weekday/60))
+            .attr("fill", "#69b3a2")
+            .on("mousemove", function (e, d) {
+                const mousePosition = [e.pageX, e.pageY];
+                tooltip.transition()
+                    .duration(200)
+                    .style("opacity", 1)
+                    .style("left", (mousePosition[0] + margin.left) + "px")
+                    .style("top", (mousePosition[1] + margin.top) + "px");
+                tooltip.html(`${d.grp}: ${d.duration_weekday} minutes`);
+            })
+            .on("mouseout", function() {
+                tooltip.transition()
+                    .duration(500)
+                    .style("opacity", 0);
+            });
+
+        bars.append("rect")
+            .attr("class", "weekend")
+            .attr("x", xScale.bandwidth() * 0.5)
+            .attr("y", d => yScale(+d.duration_weekend/60))
+            .attr("width", xScale.bandwidth() * 0.4)
+            .attr("height", d => height - margin.top - margin.bottom - yScale(+d.duration_weekend/60))
+            .attr("fill", "#404080")
+            .on("mousemove", function (e, d) {
+                const mousePosition = [e.pageX, e.pageY];
+                tooltip.transition()
+                    .duration(200)
+                    .style("opacity", 1)
+                    .style("left", (mousePosition[0] + margin.left) + "px")
+                    .style("top", (mousePosition[1] + margin.top) + "px");
+                tooltip.html(`${d.grp}: ${d.duration_weekend} minutes`);
+            })
+            .on("mouseout", function() {
+                tooltip.transition()
+                    .duration(500)
+                    .style("opacity", 0);
+            });
+
+            svg1.append("text")
+                .attr("transform", "translate(" + (width - margin.left - margin.right) / 2 + "," + (height - margin.top + 15) + ")")
+                .style("text-anchor", "middle")
+                .style("font-size", "20px")
+                .text("Applications");
+
+            svg1.append("text")
+                .attr("transform", "rotate(-90)")
+                .attr("y", 0 - margin.left )
+                .attr("x", 0 - (height / 2))
+                .attr("dy", "1em")
+                .style("text-anchor", "middle")
+                .style("font-size", "20px")
+                .text("Duration (hours)");
+
+            // Add legend
+            const legend = svg1.append("g")
+                .attr("class", "legend")
+                .attr("transform", "translate(" + (width - margin.right - 200) + "," + (margin.top + 100) + ")");
+
+            legend.append("rect")
+                .attr("class", "weekday")
+                .attr("x", 0)
+                .attr("y", 0)
+                .attr("width", 20)
+                .attr("height", 20)
+                .attr("fill", "#69b3a2");
+
+            legend.append("text")
+                .attr("x", 30)
+                .attr("y", 10)
+                .text("Weekday");
+
+            legend.append("rect")
+                .attr("class", "weekend")
+                .attr("x", 0)
+                .attr("y", 30)
+                .attr("width", 20)
+                .attr("height", 20)
+                .attr("fill", "#404080");
+
+            legend.append("text")
+                .attr("x", 30)
+                .attr("y", 40)
+                .text("Weekend");
+
+            });
+
+        d3.csv("data/radial_bar_chart.csv").then(function (data) {
+            let totalWeekday = d3.sum(data, (d) => +d.duration_weekday);
+            let totalWeekend = d3.sum(data, (d) => +d.duration_weekend);
+            const total_cal_percentage = (totalWeekday + totalWeekend)/60
+    
+            const totalData = [
+            { day_type: "Weekdays", totalDuration: totalWeekday / 60 }, 
+            { day_type: "Weekends", totalDuration: totalWeekend / 60 }, 
+            ];
+    
+        const width = 400;
+        const height = 400;
+        const radius = 140;
+        const margin = { top: 20, right: 20, bottom: 20, left: 20 };
   
-<div id="chart-container">
-<div id="chart"></div>
-</div>
+        // Second chart
+        const svg = d3
+          .select(".chart1")
+          .append("svg")
+          .attr("width", width)
+          .attr("height", height)
+          .append("g")
+          .attr("transform", "translate(" + width / 2 + "," + (height / 2 - 40) + ")");
+  
+        const pie = d3.pie().value((d) => d.totalDuration);
+  
+        const arc = d3
+          .arc()
+          .innerRadius(0.6*radius)
+          .outerRadius(radius);
+  
+        const arcs = svg
+          .selectAll("arc")
+          .data(pie(totalData))
+          .enter()
+          .append("g")
+          .attr("class", "arc");
+  
+        arcs
+          .append("path")
+          .attr("d", arc)
+          .attr("fill", (d) => (d.data.day_type === "Weekends" ? "#404080" : "#69b3a2"));
+  
+        arcs.append("text")
+            .attr("transform", function(d) {
+                const pos = arc.centroid(d);
+                pos[0] = pos[0] * 1.5; 
+                pos[1] = pos[1] * 1.5;
+                return "translate(" + pos + ")";
+            })
+            .attr("text-anchor", "middle")
+            .text((d) => d.data.totalDuration.toFixed(1) + "h")
+            .on("mousemove", function (e, d) {
+                const mousePosition = [e.pageX, e.pageY];
+                tooltip.transition()
+                    .duration(200)
+                    .style("opacity", 1)
+                    .style("left", (mousePosition[0] + margin.left) + "px")
+                    .style("top", (mousePosition[1] + margin.top) + "px");
+                tooltip.html(`${d.data.day_type}: ${(d.data.totalDuration / total_cal_percentage * 100).toFixed(1)} %`);
+            })
+            .on("mouseout", function() {
+                tooltip.transition()
+                    .duration(500)
+                    .style("opacity", 0);
+            });
+
+  
+        svg
+          .append("text")
+          .attr("text-anchor", "middle")
+          .attr("dy", radius+ 50) 
+          .style("font-weight", "bold")
+          .text("Average daily usage duration of applications");
+
+        svg
+        .append("text")
+        .attr("text-anchor", "middle")
+        .attr("dy", radius - 350) 
+        .attr("dx", radius) 
+        .text("Titre de votre visualisation");
+      });
+
+        });
+
+        //fourth visualisation
+        d3.csv("data/monthly_usage.csv").then(function(data) {
+          data.forEach(function(d) {
+            d.month = +d.month;
+            d.total_duration = +d.total_duration;
+          });
+
+          const margin = { top: 50, right: 20, bottom: 150, left: 150 };
+          const width = 1900 - margin.left - margin.right;
+          const height = 760 - margin.top - margin.bottom;
+
+          const svg = d3.select("#line-chart")
+            .attr("width", width + margin.left + margin.right )
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform", "translate(" + (margin.left -100) + "," + margin.top + ")");
+
+          const xScale = d3.scaleLinear().domain([5, 11]).range([0, width]);
+          const yScale = d3.scaleLinear().domain([0, d3.max(data, d => d.total_duration)]).range([height, 0]);
+
+          const line = d3.line()
+            .x(d => xScale(d.month))
+            .y(d => yScale(d.total_duration));
+
+          const colorScale = d3.scaleOrdinal(d3.schemeCategory10);
+
+          const groupedData = d3.group(data, d => d.grp);
+
+          groupedData.forEach((group, key) => {
+            svg.append("path")
+              .data([group])
+              .attr("class", "line")
+              .attr("d", line)
+              .attr("stroke", colorScale(key))
+              .attr("stroke-width", 1115) 
+              .attr("fill", "none")
+              .on("mousemove", function(event, d) {
+                  d3.select(this).classed("highlighted", true);
+
+                  svg.selectAll(".line:not(.highlighted)")
+                      .attr("opacity", 0.3);
+
+                  d3.select(".tooltip")
+                  .html(`<strong>${key}</strong>`)
+                  .style("left", (event.pageX + margin.left + 100) + "px")
+                  .style("top", (event.pageY + margin.top) + "px")
+                  .style("opacity", 1);
+              })
+              .on("mouseout", function() {
+                  d3.select(this).classed("highlighted", false);
+
+                  svg.selectAll(".line")
+                      .attr("opacity", 1);
+
+                  d3.select(".tooltip").style("opacity", 0);
+              });
+          });
+
+          svg.append("g")
+            .attr("transform", "translate(0," + height + ")")
+            .call(d3.axisBottom(xScale))
+            .style("font-size", "16px");
+
+          svg.append("g")
+            .call(d3.axisLeft(yScale))
+            .style("font-size", "16px");
+
+          svg.append("text")
+            .attr("x", width / 2)
+            .attr("y", -margin.top / 2)
+            .attr("text-anchor", "middle")
+            .style("font-size", "26px")
+            .style("font-weight", "bold")
+            .text("Monthly Usage by Application");
+
+          svg.append("text")
+              .attr("transform", "translate(" + (width - margin.left - margin.right) / 2 + "," + (height - margin.top + 100) + ")")
+              .style("text-anchor", "middle")
+              .style("font-size", "20px")
+              .text("Months");
+
+         svg.append("text")
+           .attr("transform", "translate(" + (width - margin.left - margin.right - 1498) / 2 + "," + (height - margin.top - 530) + ")")
+           .style("text-anchor", "middle")
+           .style("font-size", "20px")
+           .text("Duration (minutes)");
+
+        });
+              
+              
+
+              
+
+    </script>
+
+    </body>
+</html>

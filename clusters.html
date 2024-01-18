@@ -16,8 +16,8 @@
 
         #watch-container {
             position: relative;
-            top: 400px;
-            right: -25%;
+            top: 240px;
+            right: -65%;
             width: 150px;
             height: 80px;
             border: 3px solid #333;
@@ -76,6 +76,12 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            margin-top: -425px;
+        }
+
+        #fast{
+          margin-left: 125px;
+
         }
 
         #chart-container {
@@ -84,6 +90,8 @@
             width: 100%; 
             height: 200%;
             margin: 20px 0;
+            margin-left: -500px;
+
         }
 
         #chart {
@@ -95,6 +103,9 @@
             grid-column: span 12;
             font-size: 25px;
             text-align: center;
+            margin-right: -205px;
+            margin-top: 75px;
+            font-weight: bold;
         }
 
         /*Troisième vis*/
@@ -103,6 +114,8 @@
             position: relative;
             width: 200%; 
             margin: 20px 0;
+            margin-left: 540px;
+            margin-top: -2300px;
         }
 
         .legend {
@@ -130,14 +143,45 @@
             border-radius: 2px;
             opacity: 0.9;
             position: absolute;
-            pointer-events: none; /* Ensures the tooltip doesn't interfere with mouse events on the chart */
+            pointer-events: none; 
             }
+
+            .chart-container3 {
+                grid-column: span 6;
+                position: relative;
+                width: 700%; 
+                margin: 100px 0;
+                margin-left: -810px;
+                margin-top: 750px;        
+                }
+
+                .line {
+                stroke-width: 7;
+                }
+
+                .line-text {
+                font-size: 14px;
+                fill: #333;
+                }
+
+                div.tooltip {
+                color: #222;
+                background-color: #fff;
+                padding: 0.5em;
+                text-shadow: #f5f5f5 0 1px 0;
+                border-radius: 2px;
+                opacity: 0.9;
+                position: absolute;
+                pointer-events: none;
+                }
+
 
     </style>
 </head>
 
 <body>
     <div class="container">
+      <h1 id="h1">Temporal Analysis of Mobile Application Usage Habits and Patterns</h1>
         <div id="watch-container">
             <div id="watch-face">
                 <div id="timecount">
@@ -145,26 +189,28 @@
                     <span class="minutes">0</span>
                     <span class="ampm">am</span>
                 </div>
+                
+            <div id="buttons-container">
+                <button id="fast" class="btn btn-secondary">FAST</button>
+                <button id="stop" class="btn btn-secondary">STOP</button>
+                <button id="medium" class="btn btn-secondary">NRML</button>
             </div>
         </div>
 
-        <div id="buttons-container">
-            <button id="fast" class="btn btn-secondary">FAST</button>
-            <button id="stop" class="btn btn-secondary">STOP</button>
-            <button id="medium" class="btn btn-secondary">NRML</button>
-        </div>
-
-        <h1 id="h1">Temporal Analysis of Mobile Application Usage Habits and Patterns</h1>
-
-        <div id="chart-container">
-            <div id="chart"></div>
-        </div>
-
-         
-        <div class="chart-container1">
-            <div class="chart1"> </div>
-        </div>
     </div>
+
+    <div id="chart-container">
+      <div id="chart"></div>
+    </div>
+    
+    <div class="chart-container1">
+      <div class="chart1"> </div>
+  </div>
+
+  <div class="chart-container3">
+      <svg id="line-chart"></svg>
+      <div class="tooltip"></div>
+  </div>
 
 
 
@@ -191,8 +237,8 @@ var node_radius = 5,
     //circle_radius = 300;
 
 var svg = d3.select("#chart").append("svg")
-    .attr("width", width + margin.left + margin.right + 150 )
-    .attr("height", height + margin.top + margin.bottom + 150 )
+    .attr("width", width + margin.left + margin.right + 550 )
+    .attr("height", height + margin.top + margin.bottom + 200 )
     .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
@@ -202,8 +248,8 @@ var moon = svg.append('image')
     .style('display', 'none')
     .attr('width', 30)
     .attr('height', 30)
-    .attr('x', 100) 
-    .attr('y', 140);
+    .attr('x', 490) 
+    .attr('y', 160);
     
 //soleil
 var sun = svg.append('image')
@@ -211,8 +257,8 @@ var sun = svg.append('image')
     .style('display', 'none')
     .attr('width', 40)
     .attr('height', 40)
-    .attr('x', 100) 
-    .attr('y', 140);
+    .attr('x', 480) 
+    .attr('y', 160);
 
 //nuit
 var night = svg.append('image')
@@ -220,8 +266,8 @@ var night = svg.append('image')
     .style('display', 'none')
     .attr('width', 40)
     .attr('height', 40)
-    .attr('x', 100) 
-    .attr('y', 140); 
+    .attr('x', 480) 
+    .attr('y', 160); 
 
 var days,
     nodes;
@@ -260,11 +306,11 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
 
     const centerX = width / 2;
     const centerY = height / 2;
-    const radius = 330; // rayon du cercle pour les clusters
+    const radius = 400; // rayon du cercle pour les clusters
 
     // Position du cluster central
-    groups["Screen off"].x = centerX + 50;
-    groups["Screen off"].y = centerY + 200;
+    groups["Screen off"].x = centerX + 490;
+    groups["Screen off"].y = centerY + 300;
 
     const totalClusters = Object.keys(groups).length - 1; 
     const angleOffset = (2 * Math.PI) / totalClusters;
@@ -273,8 +319,8 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
     for (const group in groups) {
         if (group !== "Screen off") {
             const currentAngle = index * angleOffset;
-            groups[group].x = centerX + radius * Math.cos(currentAngle) + 50;
-            groups[group].y = centerY + radius * Math.sin(currentAngle) + 140;
+            groups[group].x = centerX + radius * Math.cos(currentAngle) + 500;
+            groups[group].y = centerY + radius * Math.sin(currentAngle) + 200;
             index++;
         }
     }
@@ -387,14 +433,14 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
 
     circle.attr("fill", d => groups[d.group].color);
 
-    // Déplace les bulles du cluster "Screen off (locked)" au-dessus des autres clusters
-    circle.filter(d => d.group === "Screen off (locked)")
-        .attr("cx", d => centerX + 10 + (d.x - centerX) / scaleFactor)
-        .attr("cy", d => centerY - 150 + (d.y - centerY) / scaleFactor);
+    // Déplace les bulles du cluster Screen off au-dessus des autres clusters
+    circle.filter(d => d.group === "Screen off")
+        .attr("cx", d => centerX + 110 + (d.x - centerX) / scaleFactor)
+        .attr("cy", d => centerY - 110 + (d.y - centerY) / scaleFactor);
 
     // Pour les autres clusters, garde la position inchangée
-    circle.filter(d => d.group !== "Screen off (locked)")
-        .attr("cx", d => centerX + 20 + (d.x - centerX) / scaleFactor)
+    circle.filter(d => d.group !== "Screen off")
+        .attr("cx", d => centerX + 110 + (d.x - centerX) / scaleFactor)
         .attr("cy", d => centerY - 50 + (d.y - centerY) / scaleFactor);
 });
 
@@ -416,12 +462,14 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
             }
         });
         time_so_far += 1;
-        const hours = Math.floor(time_so_far / 60);
-        const minutes = Math.floor(time_so_far % 60);
+        let hours = Math.floor(time_so_far / 60);
+        let minutes = Math.floor(time_so_far % 60);
         let amPm = 'am';
-
-        if (hours >= 24) {
-        hours = 0; 
+        
+        if (hours === 23 && minutes === 59) {
+            time_so_far = 0;
+            hours = 0;
+            minutes = 0;
         }
 
         if (hours >= 12) {
@@ -438,31 +486,16 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
             moon.style('display', 'none');
             sun.style('display', 'block');
             night.style('display', 'none');
-        } else{
+        } else if (hours >= 17) {
+            moon.style('display', 'none');
+            sun.style('display', 'none');
+            night.style('display', 'block');
+
+         } else{
             moon.style('display', 'block');
             sun.style('display', 'none');
             night.style('display', 'none');
-        }
-
-        if (hours >= 17) {
-        const visualizationText = document.querySelectorAll('.grp, .grpcnt, h1');
-        /*visualizationText.forEach(element => {
-            element.style.color = "white";
-            element.style.fill = "white";
-            document.body.style.backgroundColor = "black";
-        });
-        moon.style('display', 'none');
-        sun.style('display', 'none');
-        night.style('display', 'block');
-
-         } else {
-        const visualizationText = document.querySelectorAll('.grp, .grpcnt, h1');
-        visualizationText.forEach(element => {
-            element.style.fill = "black";
-            element.style.color = "black";
-            document.body.style.backgroundColor = "white";
-        });*/
-        }          
+        }       
         
         hoursSpan.text(hours);
         minutesSpan.text(minutes);
@@ -558,14 +591,14 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
     }
 
 
-    //Second Visualisations
+    //Second Visualisations (matrix)
     d3.csv("data/static_visualization.csv").then(function(data) {
         var apps = data.map(d => d["App name"]);
         var times = Object.keys(data[0]).slice(1);
 
         var margin = {top: 5, right: 20, bottom: 30, left: 80},
-            width = 1500 - margin.left - margin.right,
-            height = 450 - margin.top - margin.bottom;
+            width = 1800 - margin.left - margin.right,
+            height = 550 - margin.top - margin.bottom;
 
         var xScale = d3.scaleBand()
             .domain(times)
@@ -582,10 +615,10 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
 
         var svg = d3.select("#chart")
             .append("svg")
-            .attr("width", width+ 240 + margin.left + margin.right )
+            .attr("width", width + 240 + margin.left + margin.right )
             .attr("height", height + 400 + margin.top + margin.bottom)
             .append("g")
-            .attr("transform", "translate(" + margin.left + "," + (margin.top + 250)   + ")");
+            .attr("transform", "translate(" + (margin.left+ 170) + "," + (margin.top + 250)   + ")"); //position matrice
                 
         svg.append("text")
             .attr("x", (width + margin.right) / 2)
@@ -633,12 +666,14 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
             .selectAll("text")
             .attr("transform", "rotate(-45)")
             .style("font-weight", "bold")
-            .style("text-anchor", "end");
+            .style("text-anchor", "end")
+            .style("font-size", "14px"); 
 
         svg.append("g")
             .attr("class", "y axis")
             .style("font-weight", "bold")
-            .call(d3.axisLeft(yScale));
+            .call(d3.axisLeft(yScale))
+            .style("font-size", "14px"); ;
 
         var totalTimes = times.map(function(time) {
                 return {
@@ -652,7 +687,8 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
         var margin2 = {top: 10, right: 20, bottom: 30, left: 80},
             width2 = 1500 - margin2.left - margin2.right,
             height2 = 150 - margin2.top - margin2.bottom;
-
+        
+        var width2 = 1700;
         var xScale2 = d3.scaleBand()
             .domain(times)
             .range([0, width2])
@@ -664,7 +700,7 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
 
         var svg2 = d3.select("#chart-container")
             .append("svg")
-            .attr("width", width2 + margin2.left + margin2.right)
+            .attr("width", width2 + margin2.left + 500 + margin2.right)
             .attr("height", height2 + margin2.top + margin2.bottom + 700)
             .append("g")
             .attr("transform", "translate(" + margin2.left + "," + (margin2.top + 200) + ")");//déplacer le premier bar chart
@@ -674,8 +710,8 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
             .data(totalTimes)
             .enter()
             .append("rect")
-            .attr("x", function(d) { return xScale2(d.time); })
-            .attr("y", function(d) { return yScale2(d.total); })
+            .attr("x", function(d) { return xScale2(d.time) + 170; })
+            .attr("y", function(d) { return yScale2(d.total) + 110; })
             .attr("width", xScale2.bandwidth())
             .attr("height", function(d) { return height2 - yScale2(d.total); })
             .on("mousemove", function (e, d) {
@@ -696,8 +732,8 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
 
         // Draw approximate line
         var line = d3.line()
-            .x(function(d) { return xScale2(d.time) + xScale2.bandwidth() / 2; })
-            .y(function(d) { return yScale2(d.total); });
+            .x(function(d) { return xScale2(d.time) + (xScale2.bandwidth() / 2) + 170; })
+            .y(function(d) { return yScale2(d.total) + 110; });
 
         svg2.append("path")
             .datum(totalTimes)
@@ -710,8 +746,8 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
         var sliderContainer = d3.select("#chart-container")
             .append("div") 
             .style("position", "relative")
-            .style("bottom", "700px")
-            .style("margin-left", "75px"); 
+            .style("bottom", "600px")
+            .style("margin-left", "240px"); 
 
         var slider = sliderContainer.append("input")
             .attr("id", "slider")
@@ -720,11 +756,11 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
             .attr("min", "0")
             .attr("max", times.length - 1)
             .attr("step", "1")
-            .style("width", "237%")
+            .style("width", "470%")
             .style("bottom", "150px")  
-            .style("height", "30px");
-        
+            .style("height", "60px");    
 
+        // rectangles rouges du slider
         var selectedTimeElement = sliderContainer.append("span")  
             .attr("id", "selectedTime")
             .style("position", "absolute")
@@ -741,12 +777,26 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
                     .attr("stroke", "none")
                     .attr("stroke-width", 1);
 
-                rectangles
-                    .filter(function (d) {
-                        return d.time === selectedTime;
-                    })
-                    .attr("stroke", "red") 
-                    .attr("stroke-width", 2);
+                svg.select(".bounding-rect").remove();
+
+                var selectedRectangles = rectangles.filter(function (d) {
+                    return d.time === selectedTime;
+                });
+
+                if (!selectedRectangles.empty()) {
+                    var minY = d3.min(selectedRectangles.data(), function(d) { return yScale(d.app); });
+                    var maxY = d3.max(selectedRectangles.data(), function(d) { return yScale(d.app) + yScale.bandwidth(); });
+                    var boundingRect = svg.append("rect")
+                        .attr("class", "bounding-rect")
+                        .attr("x", d3.min(selectedRectangles.data(), function(d) { return xScale(d.time); }))
+                        .attr("y", minY)
+                        .attr("width", xScale.bandwidth())
+                        .attr("height", maxY - minY)
+                        .attr("stroke", "red")
+                        .attr("stroke-width", 2)
+                        .attr("stroke-width", 4) 
+                        .attr("fill", "none"); 
+                }
 
                 bars2
                     .attr("fill", "#add8e6");
@@ -760,7 +810,7 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
 
              });
 
-        //Third visualization (2 charts)
+        //Third visualization (Pie chart et bar chart)
         d3.csv("data/radial_bar_chart.csv").then(function(data) {
 
             data.forEach(function(d) {
@@ -769,7 +819,7 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
 
             data.sort((a, b) => b.totalDuration - a.totalDuration);
 
-            const width = 1000; 
+            const width = 1380; 
             const height = 700;
             const margin = { top: 20, right: 30, bottom: 100, left: 60 };
 
@@ -786,8 +836,8 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
                 .append("text")
                 .attr("text-anchor", "middle")
                 .attr("x", (width - margin.left - margin.right) / 2 + 100)
-                .attr("y", -margin.top / 2 + 30)
-                .text("Insights: Application Usage Patterns Across Days")
+                .attr("y", -margin.top / 2 + 10 )
+                .text("Application Usage Patterns Across Weekends and Weekdays")
                 .attr("text-anchor", "middle")
                 .style("font-size", "26px")
                 .style("font-weight", "bold");
@@ -809,10 +859,10 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
                 .selectAll("text")
                 .attr("transform", "translate(-10,0)rotate(-45)")
                 .style("text-anchor", "end")
-                .style("font-size", "12px");
-                
+                .style("font-size", "16px");                
 
             svg1.append("g")
+                .style("font-size", "16px")
                 .call(d3.axisLeft(yScale));
 
             const bars = svg1.selectAll("g.bar")
@@ -866,16 +916,18 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
             });
 
             svg1.append("text")
-                .attr("transform", "translate(" + (width - margin.left - margin.right) / 2 + "," + (height - margin.top) + ")")
+                .attr("transform", "translate(" + (width - margin.left - margin.right) / 2 + "," + (height - margin.top + 15) + ")")
                 .style("text-anchor", "middle")
+                .style("font-size", "20px")
                 .text("Applications");
 
             svg1.append("text")
                 .attr("transform", "rotate(-90)")
-                .attr("y", 0 - margin.left)
+                .attr("y", 0 - margin.left )
                 .attr("x", 0 - (height / 2))
                 .attr("dy", "1em")
                 .style("text-anchor", "middle")
+                .style("font-size", "20px")
                 .text("Duration (hours)");
 
             // Add legend
@@ -933,7 +985,7 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
           .attr("width", width)
           .attr("height", height)
           .append("g")
-          .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+          .attr("transform", "translate(" + width / 2 + "," + (height / 2 - 40) + ")");
   
         const pie = d3.pie().value((d) => d.totalDuration);
   
@@ -982,7 +1034,8 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
         svg
           .append("text")
           .attr("text-anchor", "middle")
-          .attr("dy", radius + 50) 
+          .attr("dy", radius+ 50) 
+          .style("font-weight", "bold")
           .text("Average daily usage duration of applications");
 
         svg
@@ -995,7 +1048,98 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
 
         });
 
-        
+        //fourth visualisation
+        d3.csv("data/monthly_usage.csv").then(function(data) {
+          data.forEach(function(d) {
+            d.month = +d.month;
+            d.total_duration = +d.total_duration;
+          });
+
+          const margin = { top: 50, right: 20, bottom: 150, left: 150 };
+          const width = 1900 - margin.left - margin.right;
+          const height = 760 - margin.top - margin.bottom;
+
+          const svg = d3.select("#line-chart")
+            .attr("width", width + margin.left + margin.right )
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform", "translate(" + (margin.left -100) + "," + margin.top + ")");
+
+          const xScale = d3.scaleLinear().domain([5, 11]).range([0, width]);
+          const yScale = d3.scaleLinear().domain([0, d3.max(data, d => d.total_duration)]).range([height, 0]);
+
+          const line = d3.line()
+            .x(d => xScale(d.month))
+            .y(d => yScale(d.total_duration));
+
+          const colorScale = d3.scaleOrdinal(d3.schemeCategory10);
+
+          const groupedData = d3.group(data, d => d.grp);
+
+          groupedData.forEach((group, key) => {
+            svg.append("path")
+              .data([group])
+              .attr("class", "line")
+              .attr("d", line)
+              .attr("stroke", colorScale(key))
+              .attr("stroke-width", 1115) 
+              .attr("fill", "none")
+              .on("mousemove", function(event, d) {
+                  d3.select(this).classed("highlighted", true);
+
+                  svg.selectAll(".line:not(.highlighted)")
+                      .attr("opacity", 0.3);
+
+                  d3.select(".tooltip")
+                  .html(`<strong>${key}</strong>`)
+                  .style("left", (event.pageX + margin.left + 100) + "px")
+                  .style("top", (event.pageY + margin.top) + "px")
+                  .style("opacity", 1);
+              })
+              .on("mouseout", function() {
+                  d3.select(this).classed("highlighted", false);
+
+                  svg.selectAll(".line")
+                      .attr("opacity", 1);
+
+                  d3.select(".tooltip").style("opacity", 0);
+              });
+          });
+
+          svg.append("g")
+            .attr("transform", "translate(0," + height + ")")
+            .call(d3.axisBottom(xScale))
+            .style("font-size", "16px");
+
+          svg.append("g")
+            .call(d3.axisLeft(yScale))
+            .style("font-size", "16px");
+
+          svg.append("text")
+            .attr("x", width / 2)
+            .attr("y", -margin.top / 2)
+            .attr("text-anchor", "middle")
+            .style("font-size", "26px")
+            .style("font-weight", "bold")
+            .text("Monthly Usage by Application");
+
+          svg.append("text")
+              .attr("transform", "translate(" + (width - margin.left - margin.right) / 2 + "," + (height - margin.top + 100) + ")")
+              .style("text-anchor", "middle")
+              .style("font-size", "20px")
+              .text("Months");
+
+         svg.append("text")
+           .attr("transform", "translate(" + (width - margin.left - margin.right - 1498) / 2 + "," + (height - margin.top - 530) + ")")
+           .style("text-anchor", "middle")
+           .style("font-size", "20px")
+           .text("Duration (minutes)");
+
+        });
+              
+              
+
+              
 
     </script>
 
