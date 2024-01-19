@@ -88,7 +88,7 @@
             grid-column: span 6;
             position: relative;
             width: 100%; 
-            height: 200%;
+            height: 100%;
             margin: 20px 0;
             margin-left: -500px;
 
@@ -110,13 +110,13 @@
 
         /*Troisième vis*/
         .chart-container1 {
-            grid-column: span 6;
-            position: relative;
-            width: 200%; 
-            margin: 20px 0;
-            margin-left: 540px;
-            margin-top: -2300px;
-        }
+                grid-column: span 6;
+                position: relative;
+                width: 700%; 
+                margin: 100px 0;
+                margin-left: -135px;
+                margin-top: -250px;        
+                }
 
         .legend {
             margin-top: 20px;
@@ -129,11 +129,6 @@
             margin-right: 5px;
         }
 
-        .chart1 {
-            margin-left: -670px;
-            margin-top: 2100px;
-
-        }
 
         div.tooltip {
             color: #222;
@@ -144,6 +139,8 @@
             opacity: 0.9;
             position: absolute;
             pointer-events: none; 
+            margin-left: -235px;
+            margin-top: -100px;  
             }
 
             .chart-container3 {
@@ -152,7 +149,7 @@
                 width: 700%; 
                 margin: 100px 0;
                 margin-left: -810px;
-                margin-top: 750px;        
+                margin-top: 600px;        
                 }
 
                 .line {
@@ -162,17 +159,6 @@
                 .line-text {
                 font-size: 14px;
                 fill: #333;
-                }
-
-                div.tooltip {
-                color: #222;
-                background-color: #fff;
-                padding: 0.5em;
-                text-shadow: #f5f5f5 0 1px 0;
-                border-radius: 2px;
-                opacity: 0.9;
-                position: absolute;
-                pointer-events: none;
                 }
 
 
@@ -202,14 +188,13 @@
     <div id="chart-container">
       <div id="chart"></div>
     </div>
-    
-    <div class="chart-container1">
-      <div class="chart1"> </div>
-  </div>
 
+    <div class="chart-container1">
+        <div class="chart1"> </div>
+    </div>
   <div class="chart-container3">
       <svg id="line-chart"></svg>
-      <div class="tooltip"></div>
+      <div id="tooltip"></div>
   </div>
 
 
@@ -811,28 +796,94 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
              });
 
         //Third visualization (Pie chart et bar chart)
-        d3.csv("data/radial_bar_chart.csv").then(function(data) {
+      d3.csv("data/radial_bar_chart.csv").then(function(data) {
 
-            data.forEach(function(d) {
-                d.totalDuration = (+d.duration_weekday + +d.duration_weekend) / 60; 
-            });
+        data.forEach(function(d) {
+          d.totalDuration = +d.duration_weekday + +d.duration_weekend;
+        });
 
-            data.sort((a, b) => b.totalDuration - a.totalDuration);
+        data.sort((a, b) => b.totalDuration - a.totalDuration);
 
-            const width = 1380; 
-            const height = 700;
-            const margin = { top: 20, right: 30, bottom: 100, left: 60 };
+        const width = 1200; 
+        const height = 700;
+        const margin = { top: 20, right: 30, bottom: 100, left: 60 };
 
-            const applications = data.map(d => d.grp);
+        const applications = data.map(d => d.grp);
 
-            // First chart
-            const svg1 = d3.select(".chart1").append("svg")
-                .attr("width", width)
-                .attr("height", height + 200)
-                .append("g")
-                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+        const svg1 = d3.select(".chart1").append("svg")
+          .attr("width", width)
+          .attr("height", height)
+          .append("g")
+          .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-            svg1
+        // X-axis scale
+        const xScale = d3.scaleBand()
+          .domain(applications)
+          .range([0, width - margin.left - margin.right])
+          .padding(0.1);
+
+        // Y-axis scale
+        const yScale = d3.scaleLinear()
+          .domain([0, d3.max(data, d => d.totalDuration)])
+          .range([height - margin.top - margin.bottom, 0]);
+
+        // Create X-axis
+        svg1.append("g")
+          .attr("transform", "translate(0," + (height - margin.top - margin.bottom) + ")")
+          .call(d3.axisBottom(xScale).tickSizeOuter(0))
+          .selectAll("text")
+          .attr("transform", "translate(-10,0)rotate(-45)")
+          .style("text-anchor", "end")
+          .style("font-size", "12px"); // Adjust font size to fit rotated labels
+
+        // Create Y-axis
+        svg1.append("g")
+          .call(d3.axisLeft(yScale));
+
+        // Create bars
+        const bars = svg1.selectAll("g.bar")
+          .data(data)
+          .enter().append("g")
+          .attr("class", "bar")
+          .attr("transform", d => "translate(" + xScale(d.grp) + ",0)");
+
+        bars.append("rect")
+          .attr("class", "weekday")
+          .attr("x", xScale.bandwidth() * 0.1)
+          .attr("y", d => yScale(+d.duration_weekday))
+          .attr("width", xScale.bandwidth() * 0.4)
+          .attr("height", d => height - margin.top - margin.bottom - yScale(+d.duration_weekday))
+          .attr("fill", "#69b3a2");
+
+        bars.append("rect")
+          .attr("class", "weekend")
+          .attr("x", xScale.bandwidth() * 0.5)
+          .attr("y", d => yScale(+d.duration_weekend))
+          .attr("width", xScale.bandwidth() * 0.4)
+          .attr("height", d => height - margin.top - margin.bottom - yScale(+d.duration_weekend))
+          .attr("fill", "#404080");
+
+        // Add X-axis label
+        svg1.append("text")
+          .attr("transform", "translate(" + (width - margin.left - margin.right) / 2 + "," + (height - margin.top -30 ) + ")")
+          .style("text-anchor", "middle")
+          .text("Applications");
+
+        // Add Y-axis label
+        svg1.append("text")
+          .attr("transform", "rotate(-90)")
+          .attr("y", 0 - margin.left)
+          .attr("x", 0 - (height / 2))
+          .attr("dy", "1em")
+          .style("text-anchor", "middle")
+          .text("Duration (min)");
+
+        // Add legend for both charts
+        const legend = svg1.append("g")
+          .attr("class", "legend")
+          .attr("transform", "translate(" + (width - margin.right - 200) + "," + (margin.top + 100) + ")");
+
+          svg1
                 .append("text")
                 .attr("text-anchor", "middle")
                 .attr("x", (width - margin.left - margin.right) / 2 + 100)
@@ -842,150 +893,58 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
                 .style("font-size", "26px")
                 .style("font-weight", "bold");
 
-            // X-axis
-            const xScale = d3.scaleBand()
-                .domain(applications)
-                .range([0, width - margin.left - margin.right])
-                .padding(0.1);
+        legend.append("rect")
+          .attr("class", "weekday")
+          .attr("x", 0)
+          .attr("y", 0)
+          .attr("width", 20)
+          .attr("height", 20)
+          .attr("fill", "#69b3a2");
 
-            // Y-axis
-            const yScale = d3.scaleLinear()
-                .domain([0, d3.max(data, d => d.totalDuration)])
-                .range([height - margin.top - margin.bottom, 0]);
+        legend.append("text")
+          .attr("x", 30)
+          .attr("y", 10)
+          .text("Weekday");
 
-            svg1.append("g")
-                .attr("transform", "translate(0," + (height - margin.top - margin.bottom) + ")")
-                .call(d3.axisBottom(xScale).tickSizeOuter(0))
-                .selectAll("text")
-                .attr("transform", "translate(-10,0)rotate(-45)")
-                .style("text-anchor", "end")
-                .style("font-size", "16px");                
+        legend.append("rect")
+          .attr("class", "weekend")
+          .attr("x", 0)
+          .attr("y", 30)
+          .attr("width", 20)
+          .attr("height", 20)
+          .attr("fill", "#404080");
 
-            svg1.append("g")
-                .style("font-size", "16px")
-                .call(d3.axisLeft(yScale));
+        legend.append("text")
+          .attr("x", 30)
+          .attr("y", 40)
+          .text("Weekend");
 
-            const bars = svg1.selectAll("g.bar")
-                .data(data)
-                .enter().append("g")
-                .attr("class", "bar")
-                .attr("transform", d => "translate(" + xScale(d.grp) + ",0)");
+      });
 
-        bars.append("rect")
-            .attr("class", "weekday")
-            .attr("x", xScale.bandwidth() * 0.1)
-            .attr("y", d => yScale(+d.duration_weekday/60))
-            .attr("width", xScale.bandwidth() * 0.4)
-            .attr("height", d => height - margin.top - margin.bottom - yScale(+d.duration_weekday/60))
-            .attr("fill", "#69b3a2")
-            .on("mousemove", function (e, d) {
-                const mousePosition = [e.pageX, e.pageY];
-                tooltip.transition()
-                    .duration(200)
-                    .style("opacity", 1)
-                    .style("left", (mousePosition[0] + margin.left) + "px")
-                    .style("top", (mousePosition[1] + margin.top) + "px");
-                tooltip.html(`${d.grp}: ${d.duration_weekday} minutes`);
-            })
-            .on("mouseout", function() {
-                tooltip.transition()
-                    .duration(500)
-                    .style("opacity", 0);
-            });
-
-        bars.append("rect")
-            .attr("class", "weekend")
-            .attr("x", xScale.bandwidth() * 0.5)
-            .attr("y", d => yScale(+d.duration_weekend/60))
-            .attr("width", xScale.bandwidth() * 0.4)
-            .attr("height", d => height - margin.top - margin.bottom - yScale(+d.duration_weekend/60))
-            .attr("fill", "#404080")
-            .on("mousemove", function (e, d) {
-                const mousePosition = [e.pageX, e.pageY];
-                tooltip.transition()
-                    .duration(200)
-                    .style("opacity", 1)
-                    .style("left", (mousePosition[0] + margin.left) + "px")
-                    .style("top", (mousePosition[1] + margin.top) + "px");
-                tooltip.html(`${d.grp}: ${d.duration_weekend} minutes`);
-            })
-            .on("mouseout", function() {
-                tooltip.transition()
-                    .duration(500)
-                    .style("opacity", 0);
-            });
-
-            svg1.append("text")
-                .attr("transform", "translate(" + (width - margin.left - margin.right) / 2 + "," + (height - margin.top + 15) + ")")
-                .style("text-anchor", "middle")
-                .style("font-size", "20px")
-                .text("Applications");
-
-            svg1.append("text")
-                .attr("transform", "rotate(-90)")
-                .attr("y", 0 - margin.left )
-                .attr("x", 0 - (height / 2))
-                .attr("dy", "1em")
-                .style("text-anchor", "middle")
-                .style("font-size", "20px")
-                .text("Duration (hours)");
-
-            // Add legend
-            const legend = svg1.append("g")
-                .attr("class", "legend")
-                .attr("transform", "translate(" + (width - margin.right - 200) + "," + (margin.top + 100) + ")");
-
-            legend.append("rect")
-                .attr("class", "weekday")
-                .attr("x", 0)
-                .attr("y", 0)
-                .attr("width", 20)
-                .attr("height", 20)
-                .attr("fill", "#69b3a2");
-
-            legend.append("text")
-                .attr("x", 30)
-                .attr("y", 10)
-                .text("Weekday");
-
-            legend.append("rect")
-                .attr("class", "weekend")
-                .attr("x", 0)
-                .attr("y", 30)
-                .attr("width", 20)
-                .attr("height", 20)
-                .attr("fill", "#404080");
-
-            legend.append("text")
-                .attr("x", 30)
-                .attr("y", 40)
-                .text("Weekend");
-
-            });
-
+            //pie chart
         d3.csv("data/radial_bar_chart.csv").then(function (data) {
             let totalWeekday = d3.sum(data, (d) => +d.duration_weekday);
             let totalWeekend = d3.sum(data, (d) => +d.duration_weekend);
             const total_cal_percentage = (totalWeekday + totalWeekend)/60
     
             const totalData = [
-            { day_type: "Weekdays", totalDuration: totalWeekday / 60 }, 
-            { day_type: "Weekends", totalDuration: totalWeekend / 60 }, 
+            { day_type: "Weekdays", totalDuration: totalWeekday}, 
+            { day_type: "Weekends", totalDuration: totalWeekend}, 
             ];
     
-        const width = 400;
-        const height = 400;
-        const radius = 140;
+        const width = 500;
+        const height = 500;
+        const radius = 170; // rayon pie chart
         const margin = { top: 20, right: 20, bottom: 20, left: 20 };
   
         // Second chart
         const svg = d3
           .select(".chart1")
           .append("svg")
-          .attr("width", width)
+          .attr("width", width )
           .attr("height", height)
           .append("g")
-          .attr("transform", "translate(" + width / 2 + "," + (height / 2 - 40) + ")");
+          .attr("transform", "translate(" + width / 2 + "," + (height / 2 + 25) + ")");
   
         const pie = d3.pie().value((d) => d.totalDuration);
   
@@ -1014,7 +973,7 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
                 return "translate(" + pos + ")";
             })
             .attr("text-anchor", "middle")
-            .text((d) => d.data.totalDuration.toFixed(1) + "h")
+            .text((d) => d.data.totalDuration.toFixed(1) + "min")
             .on("mousemove", function (e, d) {
                 const mousePosition = [e.pageX, e.pageY];
                 tooltip.transition()
@@ -1038,12 +997,6 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
           .style("font-weight", "bold")
           .text("Average daily usage duration of applications");
 
-        svg
-        .append("text")
-        .attr("text-anchor", "middle")
-        .attr("dy", radius - 350) 
-        .attr("dx", radius) 
-        .text("Titre de votre visualisation");
       });
 
         });
@@ -1072,7 +1025,7 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
             .x(d => xScale(d.month))
             .y(d => yScale(d.total_duration));
 
-          const colorScale = d3.scaleOrdinal(d3.schemeCategory10);
+          const colorScale = d3.scaleOrdinal(d3.schemePaired);
 
           const groupedData = d3.group(data, d => d.grp);
 
@@ -1089,6 +1042,8 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
 
                   svg.selectAll(".line:not(.highlighted)")
                       .attr("opacity", 0.3);
+                
+                      console.log("Application Name:", key);
 
                   d3.select(".tooltip")
                   .html(`<strong>${key}</strong>`)

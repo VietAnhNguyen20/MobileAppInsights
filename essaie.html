@@ -88,7 +88,7 @@
             grid-column: span 6;
             position: relative;
             width: 100%; 
-            height: 200%;
+            height: 100%;
             margin: 20px 0;
             margin-left: -500px;
 
@@ -110,13 +110,13 @@
 
         /*Troisième vis*/
         .chart-container1 {
-            grid-column: span 6;
-            position: relative;
-            width: 300%; 
-            margin: 20px 0;
-            margin-left: 540px;
-            margin-top: -2300px;
-        }
+                grid-column: span 6;
+                position: relative;
+                width: 700%; 
+                margin: 100px 0;
+                margin-left: -135px;
+                margin-top: -250px;        
+                }
 
         .legend {
             margin-top: 20px;
@@ -129,11 +129,6 @@
             margin-right: 5px;
         }
 
-        .chart1 {
-            margin-left: -670px;
-            margin-top: 2100px;
-
-        }
 
         div.tooltip {
             color: #222;
@@ -152,7 +147,7 @@
                 width: 700%; 
                 margin: 100px 0;
                 margin-left: -810px;
-                margin-top: 750px;        
+                margin-top: 600px;        
                 }
 
                 .line {
@@ -202,11 +197,10 @@
     <div id="chart-container">
       <div id="chart"></div>
     </div>
-    
-    <div class="chart-container1">
-      <div class="chart1"> </div>
-  </div>
 
+    <div class="chart-container1">
+        <div class="chart1"> </div>
+    </div>
   <div class="chart-container3">
       <svg id="line-chart"></svg>
       <div class="tooltip"></div>
@@ -828,7 +822,7 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
             // First chart
             const svg1 = d3.select(".chart1").append("svg")
                 .attr("width", width)
-                .attr("height", height + 200)
+                .attr("height", height )
                 .append("g")
                 .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
@@ -969,20 +963,20 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
             const total_cal_percentage = (totalWeekday + totalWeekend)/60
     
             const totalData = [
-            { day_type: "Weekdays", totalDuration: totalWeekday / 60 }, 
-            { day_type: "Weekends", totalDuration: totalWeekend / 60 }, 
+            { day_type: "Weekdays", totalDuration: totalWeekday}, 
+            { day_type: "Weekends", totalDuration: totalWeekend}, 
             ];
     
         const width = 400;
         const height = 400;
-        const radius = 140;
+        const radius = 130; // rayo pie chart
         const margin = { top: 20, right: 20, bottom: 20, left: 20 };
   
         // Second chart
         const svg = d3
           .select(".chart1")
           .append("svg")
-          .attr("width", width)
+          .attr("width", width )
           .attr("height", height)
           .append("g")
           .attr("transform", "translate(" + width / 2 + "," + (height / 2 - 40) + ")");
