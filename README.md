@@ -8,6 +8,7 @@ This project focuses on exploring the habit of phone usages (including phone's a
 
 ### 1.1 Source of data
 https://www.kaggle.com/datasets/arul08/mobile-usage-dataset-individual-person/data
+https://abardou.github.io/viz-habits/#/visualisation 
 
 ### 1.2 Process the data:
 - Using Python 
@@ -20,8 +21,6 @@ conda activate M2_DataViz
 pip install -r requirements.txt
 
 """
-
-
 ## 2. Visualization with D3
 
 
