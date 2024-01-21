@@ -853,7 +853,21 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
           .attr("y", d => yScale(+d.duration_weekday))
           .attr("width", xScale.bandwidth() * 0.4)
           .attr("height", d => height - margin.top - margin.bottom - yScale(+d.duration_weekday))
-          .attr("fill", "#69b3a2");
+          .attr("fill", "#69b3a2")
+          .on("mousemove", function (e, d) {
+                const mousePosition = [e.pageX, e.pageY];
+                tooltip.transition()
+                    .duration(200)
+                    .style("opacity", 1)
+                    .style("left", (mousePosition[0] + margin.left) + "px")
+                    .style("top", (mousePosition[1] + margin.top) + "px");
+                tooltip.html(`${+d.duration_weekday} minutes`);
+            })
+            .on("mouseout", function() {
+                tooltip.transition()
+                    .duration(500)
+                    .style("opacity", 0)
+            });
 
         bars.append("rect")
           .attr("class", "weekend")
@@ -861,7 +875,22 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
           .attr("y", d => yScale(+d.duration_weekend))
           .attr("width", xScale.bandwidth() * 0.4)
           .attr("height", d => height - margin.top - margin.bottom - yScale(+d.duration_weekend))
-          .attr("fill", "#404080");
+          .attr("fill", "#404080")
+          .on("mousemove", function (e, d) {
+                const mousePosition = [e.pageX, e.pageY];
+                tooltip.transition()
+                    .duration(200)
+                    .style("opacity", 1)
+                    .style("left", (mousePosition[0] + margin.left) + "px")
+                    .style("top", (mousePosition[1] + margin.top) + "px");
+                tooltip.html(`${+d.duration_weekend} minutes`);
+            })
+            .on("mouseout", function() {
+                tooltip.transition()
+                    .duration(500)
+                    .style("opacity", 0)
+            });
+          
 
         // Add X-axis label
         svg1.append("text")
@@ -973,7 +1002,7 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
                 return "translate(" + pos + ")";
             })
             .attr("text-anchor", "middle")
-            .text((d) => d.data.totalDuration.toFixed(1) + "min")
+            .text((d) => d.data.totalDuration + "min")
             .on("mousemove", function (e, d) {
                 const mousePosition = [e.pageX, e.pageY];
                 tooltip.transition()
