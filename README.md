@@ -23,10 +23,22 @@ pip install -r requirements.txt
 """
 ## 2. Visualization with D3
 
+### 2.1 Bubles clusterings (Tutorials on bubles clusterings, code available)
 
-### 2.1  Inspiring ideas:
+https://gist.github.com/mbostock/7881887
 
-- https://flowingdata.com/2015/12/15/a-day-in-the-life-of-americans/
+### 2.2 A day in American life (ideas, no code available)
+
+https://flowingdata.com/2015/12/15/a-day-in-the-life-of-americans/
+https://abardou.github.io/viz-habits/#/visualisation
+
+
+### 2.3 D3 force documentations (Extremely useful)
+
+https://d3js.org/d3-force
+
+
+### 2.4 Stackoverflow (Different types of bugs regarding d3)
 
 ## 3. Overview of the Work
 
