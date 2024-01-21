@@ -1,19 +1,13 @@
-# Regular update on projects:
+# Analyse des Habitudes d'Utilisation des Applications Mobiles
 
 ## 0. Theme of this project
 
-- This project focuses on exploring the habit of phone usages (inclusing phone's applications, duration of using, ...)
-
-- 2 visualizations expected:
-+ Comparision of phone usage between 2 periods
-+ Visualization of phone usage for M2 AI students
-
+This project focuses on exploring the habit of phone usages (including phone's applications, duration of using, ...). It comprises four main visualizations, each providing distinct insights into mobile app usage patterns. The first visualization employs a bubblechart to dynamically show the temporal evolution of app usage, with an interactive clock feature for enhanced user experience. The second visualization features a heatmap, allowing users to explore app usage trends over time using a slider and connected barchart to detect picks. The third visualization conducts a comparative analysis of app usage between weekdays and weekends, revealing distinct preferences for different types of apps during these periods. Finally, the fourth visualization,  offers a comprehensive overview of monthly app usage patterns over a 7-month period. Instagram emerges as the consistently most used app, followed by WhatsApp, YouTube, and phone calls. Notably, gaming app usage peaks in May and June, experiencing a decline until September, possibly linked to summer vacations. 
 
 ## 1. Data preparation
 
 ### 1.1 Source of data
-- A table of Application - Date - Time - Usage Duration
-- App Usage allow to get the data from day of downloading (04 Dec 2023 - Now)
+https://www.kaggle.com/datasets/arul08/mobile-usage-dataset-individual-person/data
 
 ### 1.2 Process the data:
 - Using Python 
@@ -35,23 +29,15 @@ pip install -r requirements.txt
 
 - https://flowingdata.com/2015/12/15/a-day-in-the-life-of-americans/
 
-### 2.2 Ideas to be completed
+## 3. Overview of the Work
 
-- Visualization of the change of application usage in a day (collection of a few months data)
+![Bubble Chart for Temporal Analysis of Mobile Application Usage Habits and Patterns](image/bubbleChart.png)
 
-A circle of application with the center at as "Phone off" -> See the changes in the day
+![Heat Map for the Distribution of Mobile App Usage Throughout the Day](image/heatmap.png)
 
-#### 2.1 Comparison of different periods of time for 1 person (BEGINNING)
+![Bar and Pie Chart for Application Usage Patterns Across Weekends and Weekdays](image/barChart.png)
 
-- 01/01/2023 - 31/08/2023 : Period of time in Vietnam, as employee
-- 01/09/2023 - Now: Learning Master 2 in Lyon
-
-
-#### 2.2 Habits phone usage for student following Master 2 Lyon: (NOT YET BEGIN)
-
-- 01/09/2023 - Now but this data will be collected on at least 6 people 
-
-
+![Line Chart for Monthly Usage by Application](image/lineChart.png)
 
 
 
