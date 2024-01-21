@@ -925,7 +925,7 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
         d3.csv("data/radial_bar_chart.csv").then(function (data) {
             let totalWeekday = d3.sum(data, (d) => +d.duration_weekday);
             let totalWeekend = d3.sum(data, (d) => +d.duration_weekend);
-            const total_cal_percentage = (totalWeekday + totalWeekend)/60
+            const total_cal_percentage = totalWeekday + totalWeekend
     
             const totalData = [
             { day_type: "Weekdays", totalDuration: totalWeekday}, 
@@ -935,7 +935,7 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
         const width = 500;
         const height = 500;
         const radius = 170; // rayon pie chart
-        const margin = { top: 20, right: 20, bottom: 20, left: 20 };
+        const margin = { top: 50, right: 20, bottom: 160, left: 140 };
   
         // Second chart
         const svg = d3
@@ -1088,7 +1088,7 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
            .attr("transform", "translate(" + (width - margin.left - margin.right - 1498) / 2 + "," + (height - margin.top - 530) + ")")
            .style("text-anchor", "middle")
            .style("font-size", "20px")
-           .text("Duration (mins)");
+           .text("Duration (min)");
 
         });
 
