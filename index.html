@@ -881,8 +881,8 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
                 tooltip.transition()
                     .duration(200)
                     .style("opacity", 1)
-                    .style("left", (mousePosition[0] + margin.left) + "px")
-                    .style("top", (mousePosition[1] + margin.top) + "px");
+                    .style("left", (mousePosition[0] + 200) + "px")
+                    .style("top", (mousePosition[1] + 40) + "px");
                 tooltip.html(`${+d.duration_weekday} minutes`);
             })
             .on("mouseout", function() {
@@ -903,8 +903,8 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
                 tooltip.transition()
                     .duration(200)
                     .style("opacity", 1)
-                    .style("left", (mousePosition[0] + margin.left) + "px")
-                    .style("top", (mousePosition[1] + margin.top) + "px");
+                    .style("left", (mousePosition[0] + 200) + "px")
+                    .style("top", (mousePosition[1] + 40) + "px");
                 tooltip.html(`${+d.duration_weekend} minutes`);
             })
             .on("mouseout", function() {
