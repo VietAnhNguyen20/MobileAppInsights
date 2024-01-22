@@ -65,8 +65,8 @@ Finalement, comme dernière visualisation on a fait un line chart. Cette visuali
 Habitant pas loin l'un de l'autre et ayant fait tous nos projets ensemble, mon binôme et moi avons eu la possibilité de majoritairement travailler en direct, sur place, même pendant les vacances scolaires. Cela nous a permis de discuter et de mettre en oeuvre nos idées en temps réel. Lorsque des idées nouvelles émergent, nous les discutons directement ou utilisons Discord dans l'une ou deux fois ou on n'était pas sur place, pour une communication asynchrone. Chaque fois qu'un membre de l'équipe a une nouvelle idée, on en discute ensemble et elle est intégrée au projet au fur et à mesure de son développement. Cette approche a favorisé une collaboration efficace et une communication fluide tout au long du processus de création de notre projet et surtout nous a fait gagner beaucoup de temps.
 
 ## Esquisses
-![Première Esquisse ](./image/image1.jpg)
-![Deuxième Esquisse ](./image/image2.jpg)
-![Troisième Esquisse ](./image/image3.jpg)
-![Quatrième Esquisse ](./image/image4.jpg)
-![Dernière Esquisse ](./image/image5.jpg)
+![Première Esquisse](./image/image1.jpg)
+![Deuxième Esquisse](./image/image2.jpg)
+![Troisième Esquisse](./image/image3.jpg)
+![Quatrième Esquisse](./image/image4.jpg)
+![Dernière Esquisse](./image/image5.jpg)

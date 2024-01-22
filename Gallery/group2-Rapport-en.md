@@ -74,8 +74,8 @@ Finally, as the last visualization, we created a line chart. This visualization 
 Living close to each other and having done all our projects together, my teammate and I had the opportunity to mostly work in-person, even during school holidays. This allowed us to discuss and implement our ideas in real-time. When new ideas emerged, we discussed them directly or used Discord in the few instances where we were not in the same place for asynchronous communication. Each time a team member had a new idea, we discussed it together, and it was integrated into the project as it developed. This approach facilitated effective collaboration and smooth communication throughout the process of creating our project, saving us a lot of time.
 
 ## Esquisses
-![Première Esquisse ](./image/image1.jpg)
-![Deuxième Esquisse ](./image/image2.jpg)
-![Troisième Esquisse ](./image/image3.jpg)
-![Quatrième Esquisse ](./image/image4.jpg)
-![Dernière Esquisse ](./image/image5.jpg)
+![Première Esquisse](./image/image1.jpg)
+![Deuxième Esquisse](./image/image2.jpg)
+![Troisième Esquisse](./image/image3.jpg)
+![Quatrième Esquisse](./image/image4.jpg)
+![Dernière Esquisse](./image/image5.jpg)
