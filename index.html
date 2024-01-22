@@ -15,11 +15,12 @@
         }
 
         #additional-info {
-            margin-left: 1250px; 
+            margin-left: 1150px; 
             margin-top:  30px; 
-            width: 500%; 
+            width: 400%; 
             height: 100px;
             font-size: 20px;
+            text-align: center;
             }
 
         #watch-container {
@@ -32,6 +33,7 @@
             background-color: #f1f1f1;
             border-radius: 10px;
             margin: 20px 0;
+            margin-left: -170px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -154,7 +156,8 @@
             margin-left: -235px;
             margin-top: -100px;  
             }
-
+            
+            /*quatrième*/
             .chart-container3 {
                 grid-column: span 6;
                 position: relative;
@@ -197,11 +200,11 @@
             
             <div id="additional-info">
                 <h2>DESCRIPTION</h2>
-                <p>This project delves into smartphone usage habits, exploring applications and duration of use. It presents four key visualizations for valuable insights. The first employs a dynamic bubble chart with an interactive clock, showcasing temporal app usage evolution. The second features a heatmap and connected barchart, allowing users to track app usage trends over time. The third provides a comparative analysis between weekdays and weekends, revealing distinct preferences and the fourth offers a comprehensive 7-month overview, highlighting the most used applications during this periode </p>
+                <p>This project delves into smartphone usage habits, exploring applications and duration of use. It presents four key visualizations for valuable insights. The first employs a dynamic bubble chart with an interactive clock, showcasing temporal app usage evolution. The second features a heatmap and connected barchart, allowing users to track app usage trends over time. The third provides a comparative analysis between weekdays and weekends, revealing distinct preferences and the fourth offers a comprehensive 7-month overview, highlighting the most used applications during this periode. </p>
                 <p> Work done by :</p>
                 <p><strong> Viet Anh NGUYEN : viet-anh.nguyen@etu.univ-lyon1.fr </strong> </p>
                 <p><strong>Sofia MABROUK : sofia.mabrouk@etu.univ-lyon1.fr</strong></p>
-                <a href="https://lyondataviz.github.io/teaching/lyon1-m2/2023/" target="_blank">Data Visualisation course</a>
+                <a href="https://lyondataviz.github.io/teaching/lyon1-m2/2023/" target="_blank">Data Visualisation course Lyon 1</a>
             </div>
         </div>
 
@@ -247,7 +250,7 @@ var svg = d3.select("#chart").append("svg")
     .attr("width", width + margin.left + margin.right + 550 )
     .attr("height", height + margin.top + margin.bottom + 200 )
     .append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+    .attr("transform", "translate(" + (margin.left - 150) + "," + margin.top + ")");
 
 //lune
 var moon = svg.append('image')
@@ -763,7 +766,7 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
             .attr("min", "0")
             .attr("max", times.length - 1)
             .attr("step", "1")
-            .style("width", "470%")
+            .style("width", "430%")
             .style("bottom", "150px")  
             .style("height", "60px");    
 
@@ -1060,7 +1063,7 @@ d3.csv("./data/VietAnh_processed_data.csv").then(function(data) {
           });
 
           const margin = { top: 50, right: 0, bottom: 150, left: 150 };
-          const width = 1900 - margin.left - margin.right;
+          const width = 1850 - margin.left - margin.right;
           const height = 760 - margin.top - margin.bottom;
 
           const svg = d3.select("#line-chart")
