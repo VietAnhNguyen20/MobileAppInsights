@@ -1,7 +1,9 @@
 # Analyse des Habitudes d'Utilisation des Applications Mobiles
 
 ## Lien Du Projet
-Ce projet a été fait par Viet Anh NGUYEN et Sofia MABROUK
+Ce projet a été fait par Viet Anh NGUYEN et Sofia MABROUK. 
+[GitHub Repository](https://github.com/VietAnhNguyen20/MobileAppInsights)
+
 
 
 ## Contexte et Motivation
