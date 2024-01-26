@@ -2,6 +2,8 @@
 
 ## Project Link
 This project was carried out by Viet Anh NGUYEN and Sofia MABROUK.
+[GitHub Repository](https://github.com/VietAnhNguyen20/MobileAppInsights)
+
 
 ## Context and Motivation
 Today, we are all addicted to our smartphones, often unaware of the time spent on applications. Through our visualizations, we provide a detailed analysis of application usage patterns throughout the day over a duration of 11 months for an individual. Our goal is not to stigmatize smartphone use but rather to emphasize the importance of conscious use of technology. We aim to empower users by providing a comprehensive yet precise view of their interactions with technology.
